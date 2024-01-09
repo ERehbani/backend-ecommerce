@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "title": "jajajajajaja",
+    "description": "tinkiwinki",
+    "code": "457247",
+    "price": 64,
+    "stock": 4,
+    "status": true,
+    "category": "clothes",
+    "thumbnail": [
+      "iaiaaiiaiamamamamamgenennegne"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "jajajajajaja",
+    "description": "tinkiwinki",
+    "code": "4g5g5g",
+    "price": 64,
+    "stock": 4,
+    "status": true,
+    "category": "clothes",
+    "thumbnail": [
+      "iaiaaiiaiamamamamamgenennegne"
+    ]
+  },
+  {
+    "id": 1,
+    "title": "jajajajajaja",
+    "description": "tinkiwinki",
+    "code": "j45j4",
+    "price": 64,
+    "stock": 4,
+    "status": true,
+    "category": "clothes",
+    "thumbnail": [
+      "iaiaaiiaiamamamamamgenennegne"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "jajajajajaja",
+    "description": "tinkiwinki",
+    "code": "u56u65",
+    "price": 64,
+    "stock": 4,
+    "status": true,
+    "category": "clothes",
+    "thumbnail": [
+      "iaiaaiiaiamamamamamgenennegne"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "sorn",
+    "description": "tinkiwinki",
+    "code": "45",
+    "price": 64,
+    "stock": 4,
+    "status": true,
+    "category": "clothes",
+    "thumbnail": [
+      "iaiaaiiaiamamamamamgenennegne"
+    ]
+  }
+]
