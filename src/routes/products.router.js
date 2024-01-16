@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const ProductManager = require("../controllers/ProductManager");
-const productManager = new ProductManager("src/models/products.json");
+const productManager = new ProductManager("./src/models/products.json");
 
 router.get("/products", async (req, res) => {
   try {
@@ -40,9 +40,10 @@ router.get("/products/:id", async (req, res) => {
 
 router.post("/products", async (req, res) => {
   try {
-    const { title, description, code, price, stock, category, thumbnail } =
-      req.body; // Remove the 'await' here
-    if (!title || !description || !code || !price || !stock || !category) {
+    const { title, description, code, price, stock, category, thumbnail } = req.body; 
+
+    if (!title || !description || !code || !price || !stock || !category || !thumbnail) {
+      console.log(req.body)
       return res
         .status(400)
         .json({ error: "Todos los campos son obligatorios" });
@@ -61,6 +62,7 @@ router.post("/products", async (req, res) => {
     };
 
     await productManager.addProduct(newProduct);
+
 
     res.status(201).json({
       message: "Producto agregado correctamente",

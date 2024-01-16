@@ -139,6 +139,6 @@ class ProductManager {
   
 }
 
-const manager = new ProductManager("./src/products.json");
+// const manager = new ProductManager("./src/products.json");
 
 module.exports = ProductManager;
