@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const ProductManager = require("../controllers/ProductManager");
+const ProductManager = require("../dao/fs/ProductManager");
 
 function viewsRouter(io) {
-  const productManager = new ProductManager("./src/models/products.json");
+  const productManager = new ProductManager("./src/dao/fs/products.json");
 
   router.get("/", (req, res) => {
     const products = productManager.getProducts();
     res.render("home", { products });
   });
+
+  router.get("/chat", (req, res) => {
+    res.render("chat")
+  })
 
   router.get("/realtimeproducts", (req, res) => {
     const products = productManager.getProducts();
