@@ -6,8 +6,8 @@ const productManager = new ProductManager();
 
 router.get("/products", async (req, res) => {
   try {
-    let limit = parseInt(req.query.limit);
-    const response = await productManager.getProdcuts();
+    let { limit = 10, page = 1 } = req.query;
+    const response = await productManager.getProdcuts(page);
 
     if (limit) {
       const slicedProducts = response.slice(0, limit);
@@ -32,14 +32,13 @@ router.get("/products/:id", async (req, res) => {
         error: "Producto no encontrado",
       });
     } else {
-      return res.json(response); 
+      return res.json(response);
     }
   } catch (error) {
     console.log(`error: ${error}`);
-    return res.status(500).json({ error: 'Error del servidor' }); 
+    return res.status(500).json({ error: "Error del servidor" });
   }
 });
-
 
 router.post("/products", async (req, res) => {
   const newProduct = req.body;

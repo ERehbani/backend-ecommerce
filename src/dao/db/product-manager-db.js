@@ -41,8 +41,14 @@ class ProductManager {
     }
   }
 
-  async getProdcuts() {
+  async getProdcuts(page) {
+
     try {
+      if (page) {
+        console.log(page)
+        const skipProducts = await ProductModel.find().skip(page)
+        return skipProducts
+      }
       const productos = await ProductModel.find();
       return productos;
     } catch (error) {
