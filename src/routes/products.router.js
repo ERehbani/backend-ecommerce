@@ -6,17 +6,10 @@ const productManager = new ProductManager();
 
 router.get("/products", async (req, res) => {
   try {
-    let { limit = 10, page = 1 } = req.query;
-    const response = await productManager.getProdcuts(page);
-
-    if (limit) {
-      const slicedProducts = response.slice(0, limit);
-      res.json(slicedProducts);
-    } else {
-      res.json(response);
-    }
-
-    console.log(`límite: ${limit}`);
+    let { limit = 10, page = 1, sort, query } = req.query;
+    console.log(limit)
+    const response = await productManager.getProducts(page, sort, limit, query);
+    res.json(response);
   } catch (error) {
     console.log(`error: ${error}`);
     res.status(500).json({ error: "Internal Server Error" });
@@ -87,5 +80,6 @@ router.delete("/products/:pid", async (req, res) => {
     res.status(500).send({ error: "Error interno del servidor" });
   }
 });
+
 
 module.exports = router;

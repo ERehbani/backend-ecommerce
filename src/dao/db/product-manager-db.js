@@ -41,16 +41,41 @@ class ProductManager {
     }
   }
 
-  async getProdcuts(page) {
-
+  async getProducts(page, sort = "asc", limit, query) {
+    console.log(limit);
     try {
-      if (page) {
-        console.log(page)
-        const skipProducts = await ProductModel.find().skip(page)
-        return skipProducts
-      }
-      const productos = await ProductModel.find();
-      return productos;
+      const skip = (page - 1) * limit;
+      let queryOptions = {};
+      if (query) queryOptions = { category: query };
+      const sortOptions = {};
+      sortOptions.price = sort === "asc" ? 1 : sort === "des" ? -1 : 1;
+      const products = await ProductModel.find(queryOptions)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limit);
+
+      const totalProducts = await ProductModel.countDocuments(queryOptions);
+
+      const totalPages = Math.ceil(totalProducts / limit);
+      const hasPrevPage = page > 1;
+      const hasNextPage = page < totalPages;
+
+      return {
+        status: "success",
+        docs: products,
+        totalPages,
+        prevPage: hasPrevPage ? page - 1 : null,
+        nextPage: hasNextPage ? parseInt(page) + 1 : null,
+        page,
+        hasPrevPage,
+        hasNextPage,
+        prevLink: hasPrevPage
+          ? `/api/products?limit=${limit}&page=${page - 1}&sort=${sort}`
+          : null,
+        nextLink: hasNextPage
+          ? `/api/products?limit=${limit}&page=${parseInt(page) + 1}&sort=${sort}`
+          : null,
+      };
     } catch (error) {
       console.log("Error al obtener los productos", error);
     }
