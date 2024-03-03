@@ -7,35 +7,26 @@ const productManager = new ProductManager();
 
 function viewsRouter() {
   router.get("/products", async (req, res) => {
+    console.log(req.session.login)
     try {
       const { page = 1, limit = 5 } = req.query;
       const productos = await productManager.getProducts({
         page: parseInt(page),
         limit: parseInt(limit),
       });
+      // console.log(productos)
 
       const nuevoArray = productos.docs.map((producto) => {
         const { _id, ...rest } = producto.toObject();
         return rest;
       });
       console.log({
-        productos: nuevoArray,
-        hasPrevPage: productos.hasPrevPage,
-        hasNextPage: productos.hasNextPage,
-        prevPage: productos.prevPage,
-        nextPage: productos.nextPage,
-        currentPage: productos.page,
         totalPages: productos.totalPages,
       });
 
       res.render("products", {
-        productos: nuevoArray,
-        hasPrevPage: productos.hasPrevPage,
-        hasNextPage: productos.hasNextPage,
-        prevPage: productos.prevPage,
-        nextPage: productos.nextPage,
-        currentPage: productos.page,
-        totalPages: productos.totalPages,
+        nuevoArray,
+        req: req.session.login
       });
     } catch (error) {
       console.error("Error al obtener productos", error);
@@ -45,6 +36,17 @@ function viewsRouter() {
       });
     }
   });
+
+  router.get("/product/:id", async(req, res) => {
+    try {
+      const { id } = req.params;
+      const producto = await productManager.getProductById(id);
+      console.log(producto)
+      res.render("detail", { producto });
+    } catch (error) {
+      
+    }
+  })
 
   router.get("/cart/:cid", async (req, res) => {
     const { cid } = req.params;
@@ -66,6 +68,15 @@ function viewsRouter() {
       res.status(500).json({ error: error });
     }
   });
+
+  router.get("/login", async(req, res) => {
+    console.log({req: req.session.login})
+    res.render("login", {req: req.session.login});
+  })
+
+  router.get("/register", async(req, res) => {
+    res.render("register");
+  })
 
   return router;
 }

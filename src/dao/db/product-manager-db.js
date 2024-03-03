@@ -42,7 +42,7 @@ class ProductManager {
   }
 
   async getProducts(page, sort = "asc", limit, query) {
-    console.log(limit);
+    
     try {
       const skip = (page - 1) * limit;
       let queryOptions = {};
@@ -59,7 +59,7 @@ class ProductManager {
       const totalPages = Math.ceil(totalProducts / limit);
       const hasPrevPage = page > 1;
       const hasNextPage = page < totalPages;
-
+      
       return {
         status: "success",
         docs: products,
