@@ -30,7 +30,7 @@ router.get("/logout", async (req, res) => {
   }
   res.status(200).redirect("/login");
   // req.session.login = false;
-  console.log("session cerrada", req.session.login);
+  // console.log("session cerrada", req.session.login);
 });
 
 module.exports = router;

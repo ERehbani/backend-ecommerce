@@ -14,14 +14,14 @@ function viewsRouter() {
         page: parseInt(page),
         limit: parseInt(limit),
       });
-      // console.log(productos)
 
       const nuevoArray = productos.docs.map((producto) => {
         const { _id, ...rest } = producto.toObject();
-        return rest;
+        return { _id, ...rest };
       });
+
       console.log({
-        totalPages: productos.totalPages,
+        nuevoArray
       });
 
       res.render("products", {
@@ -35,18 +35,25 @@ function viewsRouter() {
         error: "Error interno del servidor",
       });
     }
-  });
+});
 
-  router.get("/product/:id", async(req, res) => {
+
+  router.get("/product/:id", async (req, res) => {
     try {
       const { id } = req.params;
       const producto = await productManager.getProductById(id);
-      console.log(producto)
-      res.render("detail", { producto });
-    } catch (error) {
-      
-    }
+  console.log({
+    producto,
+    productId: producto._id.toString() 
   })
+      res.render("detail", {
+        producto,
+        productId: producto._id.toString() 
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  });
 
   router.get("/cart/:cid", async (req, res) => {
     const { cid } = req.params;
