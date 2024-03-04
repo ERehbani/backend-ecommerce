@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const ProductManager = require("../dao/db/product-manager-db.js");
 const CartManager = require("../dao/db/cart-manager-db.js");
-const cartManager = new CartManager()
+const cartManager = new CartManager();
 const productManager = new ProductManager();
 
 function viewsRouter() {
   router.get("/products", async (req, res) => {
-    console.log(req.session.login)
+    console.log(req.session.usuario)
     try {
       const { page = 1, limit = 5 } = req.query;
       const productos = await productManager.getProducts({
@@ -20,13 +20,12 @@ function viewsRouter() {
         return { _id, ...rest };
       });
 
-      console.log({
-        nuevoArray
-      });
+      console.log({user: req.session.usuario});
 
       res.render("products", {
         nuevoArray,
-        req: req.session.login
+        req: req.session.login,
+        user: req.session.usuario
       });
     } catch (error) {
       console.error("Error al obtener productos", error);
@@ -35,55 +34,53 @@ function viewsRouter() {
         error: "Error interno del servidor",
       });
     }
-});
-
+  });
 
   router.get("/product/:id", async (req, res) => {
     try {
       const { id } = req.params;
       const producto = await productManager.getProductById(id);
-  console.log({
-    producto,
-    productId: producto._id.toString() 
-  })
+      console.log({
+        producto,
+        productId: producto._id.toString(),
+      });
       res.render("detail", {
         producto,
-        productId: producto._id.toString() 
+        productId: producto._id.toString(),
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   });
 
   router.get("/cart/:cid", async (req, res) => {
     const { cid } = req.params;
     try {
-      const cart = await cartManager.getCartById(cid)
-      
-      if(!cart) {
-        console.log("No existe carrito con ese id")
-        return res.status(400).json({error: "Carrito no encontrado"})
+      const cart = await cartManager.getCartById(cid);
+
+      if (!cart) {
+        console.log("No existe carrito con ese id");
+        return res.status(400).json({ error: "Carrito no encontrado" });
       }
-      const productsInCart = cart.products.map(item => ({
+      const productsInCart = cart.products.map((item) => ({
         product: item.product,
-        quantity: item.quantity
-      }))
-      console.log(productsInCart)
+        quantity: item.quantity,
+      }));
+      console.log(productsInCart);
       res.render("cart", { products: productsInCart });
     } catch (error) {
-      console.log("Error al obtener el carrito")
+      console.log("Error al obtener el carrito");
       res.status(500).json({ error: error });
     }
   });
 
-  router.get("/login", async(req, res) => {
-    console.log({req: req.session.login})
-    res.render("login", {req: req.session.login});
-  })
+  router.get("/login", async (req, res) => {
+    res.render("login", { req: req.session.login });
+  });
 
-  router.get("/register", async(req, res) => {
-    res.render("register");
-  })
+  router.get("/register", async (req, res) => {
+    res.render("register").redirect("/login");
+  });
 
   return router;
 }

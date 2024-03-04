@@ -11,7 +11,7 @@ router.post("/sessionLogin", async (req, res) => {
     if (usuario) {
       if ((usuario.password === password) & (usuario.email === email)) {
         req.session.login = true;
-        
+        req.session.usuario = usuario;
         res.redirect("/products");
       } else res.status(400).send({ error: "El usuario es incorrecto ❌" });
     } else {
