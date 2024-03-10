@@ -1,12 +1,13 @@
 <h1> Productos </h1>
 
-<h2>Bienvenido/a {{user.first_name}} {{user.last_name}}!!!</h2>
-<b>ya va a llegar el dia en el que voy a estilizar esto y vas a quedar re loco
-  fede vas a ver sólo dame 3 meses más</b>
-
+{{#if user}}
+  <h2>Bienvenido/a {{user.first_name}} {{user.last_name}}!!!</h2>
+  <b>ya va a llegar el dia en el que voy a estilizar esto y vas a quedar re loco
+    fede vas a ver sólo dame 3 meses más</b>
+{{/if}}
 
 {{#if req}}
-  <a href="/api/logout">Logout</a> 
+  <a href="/api/logout">Logout</a>
 {{/if}}
 {{#each nuevoArray}}
   <div>
@@ -17,7 +18,6 @@
     <button> Agregar al Carrito </button>
   </div>
 {{/each}}
-
 
 <p>Pagina {{currentPage}} de {{totalPages}} </p>
 {{#if hasNextPage}}

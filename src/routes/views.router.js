@@ -22,6 +22,8 @@ function viewsRouter() {
 
       console.log({user: req.session.usuario});
 
+      if(!req.session.login) res.redirect("/login")
+
       res.render("products", {
         nuevoArray,
         req: req.session.login,
@@ -79,7 +81,7 @@ function viewsRouter() {
   });
 
   router.get("/register", async (req, res) => {
-    res.render("register").redirect("/login");
+    res.render("register")
   });
 
   return router;
