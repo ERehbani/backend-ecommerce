@@ -1,6 +1,5 @@
 const express = require("express");
 const http = require("http");
-const ProductManager = require("./dao/fs/ProductManager");
 const productsRouter = require("./routes/products.router");
 const cartRouter = require("./routes/cart.router");
 const userRouter = require("./routes/user.router");
@@ -11,6 +10,8 @@ const socketIO = require("socket.io");
 const MessageModel = require("./dao/models/message.model");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const passport = require("passport");
+const initializePassport = require("./config/passport.config");
 require("./database");
 
 const app = express();
@@ -38,6 +39,9 @@ app.use(
     }),
   })
 );
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 app.engine("hbs", exphbs.engine());
 app.set("view engine", "hbs");
 app.set("views", "./src/views");

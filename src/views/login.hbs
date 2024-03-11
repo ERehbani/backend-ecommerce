@@ -1,20 +1,24 @@
 <!-- login.hbs -->
 
 {{#if session.login}}
-  <a href="/logout">Logout</a> 
+  <a href="/logout">Logout</a>
 {{else}}
-<h1>LogIn</h1>
-<form action="/api/sessionLogin" method="post">
-<label for="email">Email</label>
-<input type="email" name="email" id="email">
-<label for="password">Password</label>
-<input type="password" name="password" id="password">
+  <h1>LogIn</h1>
+  <form action="/api/sessionLogin" method="post">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" />
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
 
-<button type="submit">Login</button>
-</form>
+    <button type="submit">Login</button>
+  </form>
 
-<p>don't have and accout?</p>
-<a href="/register">Register</a>
-  
+  <p>don't have and accout?</p>
+  <a href="/register">Register</a>
+
+  <div>
+    <a href="/api/sessions/github">
+      <button>Entrar con GitHub</button>
+    </a>
+  </div>
 {{/if}}
-
