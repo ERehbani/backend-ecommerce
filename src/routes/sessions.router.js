@@ -8,22 +8,22 @@ const passport = require("passport");
 
 router.post("/sessionLogin", async (req, res) => {
   const { email, password } = req.body;
+  console.log(email);
   try {
     const usuario = await userModel.findOne({ email: email });
     if (usuario) {
-      console.log(usuario);
       if (isValidPassword(usuario, password)) {
         req.session.login = true;
         req.session.usuario = usuario;
         res.redirect("/products");
       } else {
-        res.status(400).send({ error: "Contraseña incorrecta ❌" }); // Fix: Corrected error message
+        res.status(400).send({ error: "Contraseña incorrecta ❌" }); 
       }
     } else {
       res.status(400).send({ error: "El usuario no existe ❌" });
     }
   } catch (error) {
-    console.error("Error in login:", error); // Log the actual error for debugging
+    console.error("Error in login:", error);
     res.status(400).send({ error: "Error en el login ❌" });
   }
 });

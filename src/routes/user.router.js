@@ -57,10 +57,10 @@ router.post(
     req.session.usuario = {
       first_name: req.usuario.first_name,
       last_name: req.usuario.last_name,
-      password: req.usuario.password,
+      password: createHash(req.usuario.password),
       email: req.usuario.email,
       age: req.usuario.age,
-      role: req.usuario.role,
+      role: "User",
     };
     req.session.login = true;
     res.redirect("/products");
@@ -68,7 +68,7 @@ router.post(
 );
 
 router.get("/failedregister", (req, res) => {
-  res.send({error: "Registro fallido"})
-})
+  res.send({ error: "Registro fallido" });
+});
 
 module.exports = router;
