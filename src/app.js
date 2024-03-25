@@ -56,7 +56,7 @@ app.use("/api", userRouter);
 app.use("/api", sessionRouter);
 
 httpServer.listen(8080, () => {
-  console.log("Funcando en el puerto 8080");
+  console.log("8080 🌎");
 });
 
 io.on("connection", (socket) => {

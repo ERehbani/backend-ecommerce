@@ -26,7 +26,7 @@ const initializePassport = () => {
             email,
             password: createHash(password),
             age,
-            role,
+            role: "User",
           };
           let result = await User.create(newUser);
           return done(null, result);
