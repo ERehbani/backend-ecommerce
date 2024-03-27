@@ -71,4 +71,14 @@ router.get("/failedregister", (req, res) => {
   res.send({ error: "Registro fallido" });
 });
 
+router.get("/current", (req, res) => {
+  console.log(req.session.usuario, "REQ:SESSION:TRUE")
+  if (!req.session.usuario) {
+    return res.json({
+      message: "Debe estar autenticado para acceder a esta sección",
+    });
+  }
+  res.json(req.session.usuario);
+});
+
 module.exports = router;
