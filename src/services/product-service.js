@@ -1,6 +1,6 @@
-const ProductModel = require("../models/product.model");
+const ProductModel = require("../dao/models/product.model");
 
-class ProductManager {
+class ProductService {
   async addProduct({
     title,
     description,
@@ -33,7 +33,7 @@ class ProductManager {
         category,
         thumbnails: thumbnails || [],
       });
-
+      console.log(newProduct)
       await newProduct.save();
     } catch (error) {
       console.log("Error al agregar producto");
@@ -42,7 +42,7 @@ class ProductManager {
   }
 
   async getProducts(page, sort = "asc", limit, query) {
-    
+
     try {
       const skip = (page - 1) * limit;
       let queryOptions = {};
@@ -129,4 +129,4 @@ class ProductManager {
   }
 }
 
-module.exports = ProductManager;
+module.exports = ProductService;

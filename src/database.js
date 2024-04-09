@@ -1,7 +1,7 @@
 // Conexión con MongoDB
-
+const dotenv = require("dotenv").config()
 const mongoose = require("mongoose")
 
-mongoose.connect("mongodb+srv://weon:1234@cluster0.bny70nj.mongodb.net/ecommerce?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGOOSE_CONNECT)
 .then(() => console.log("MongoDB ✅"))
 .catch(() => console.log("Conexión MALARDA"))

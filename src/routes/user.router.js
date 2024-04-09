@@ -3,6 +3,8 @@ const router = express();
 const UserModel = require("../dao/models/user.model");
 const { createHash } = require("../utils/hashBcrypt");
 const passport = require("passport");
+const UserController = require("../controllers/user-controller");
+const userController = new UserController();
 
 // Post para generar un usuario y almacenarlo en mongoDB
 // router.post("/sessions", async (req, res) => {
@@ -48,37 +50,11 @@ router.post(
   passport.authenticate("register", {
     failureRedirect: "/failedregister",
   }),
-  async (req, res) => {
-    if (!req.usuario)
-      return res
-        .status(400)
-        .send({ status: "error", error: "No se pudo crear el usuario" });
-
-    req.session.usuario = {
-      first_name: req.usuario.first_name,
-      last_name: req.usuario.last_name,
-      password: createHash(req.usuario.password),
-      email: req.usuario.email,
-      age: req.usuario.age,
-      role: "User",
-    };
-    req.session.login = true;
-    res.redirect("/products");
-  }
+  userController.createUser
 );
 
-router.get("/failedregister", (req, res) => {
-  res.send({ error: "Registro fallido" });
-});
+router.get("/failedregister", userController.failedRegister);
 
-router.get("/current", (req, res) => {
-  console.log(req.session.usuario, "REQ:SESSION:TRUE")
-  if (!req.session.usuario) {
-    return res.json({
-      message: "Debe estar autenticado para acceder a esta sección",
-    });
-  }
-  res.json(req.session.usuario);
-});
+router.get("/current", (req, res) => userController.currentUser);
 
 module.exports = router;

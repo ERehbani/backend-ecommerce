@@ -1,6 +1,6 @@
-const CartModel = require("../models/cart.model");
+const CartModel = require("../dao/models/cart.model");
 
-class CartManager {
+class CartService {
   async crearCart() {
     try {
       const newCart = new CartModel({ products: [] });
@@ -87,32 +87,20 @@ class CartManager {
   }
 
   async updateQuantity(cartId, productId, newQuantity) {
-    try {
-      const cart = await CartModel.findById(cartId);
-
-      if (!cart) {
-        throw new Error("Carrito no encontrado");
-      }
-
-      const productIndex = cart.products.findIndex(
-        (item) => item.product._id.toString() === productId
-      );
-      if (productIndex !== -1) {
-        cart.products[productIndex].quantity = newQuantity;
-
-        cart.markModified("products");
-
-        await cart.save();
-      } else {
-        throw new Error("Producto no encontrado en el carrito");
-      }
-    } catch (error) {
-      console.error(
-        "Error al actualizar la cantidad del producto en el carrito",
-        error
-      );
-      throw error;
+  try {
+    const cart = await CartModel.findById(cartId);
+    const products = cart.products.findIndex((product) => product._id === productId);
+    if (products !== 1) {
+      cart.products[products].quantity = newQuantity;
+      await cart.save();
+      res.json({
+        status: "success",
+        message: "La cantidad del producto fue actualizada",
+      });
     }
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
   }
 
   async cleanCart(cartId) {
@@ -135,4 +123,4 @@ class CartManager {
   }
 }
 
-module.exports = CartManager;
+module.exports = CartService;

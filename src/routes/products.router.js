@@ -1,85 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-const ProductManager = require("../dao/db/product-manager-db");
-const productManager = new ProductManager();
+const ProductController = require("../controllers/product.controller")
+const productController = new ProductController()
 
-router.get("/products", async (req, res) => {
-  try {
-    let { limit = 10, page = 1, sort, query } = req.query;
-    console.log(limit)
-    const response = await productManager.getProducts(page, sort, limit, query);
-    res.json(response);
-  } catch (error) {
-    console.log(`error: ${error}`);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+router.get("/products", productController.getProducts);
 
-router.get("/products/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const response = await productManager.getProductById(id);
-    if (!response) {
-      return res.json({
-        error: "Producto no encontrado",
-      });
-    } else {
-      return res.json(response);
-    }
-  } catch (error) {
-    console.log(`error: ${error}`);
-    return res.status(500).json({ error: "Error del servidor" });
-  }
-});
+router.get("/products/:id", productController.getProductsById);
 
-router.post("/products", async (req, res) => {
-  const newProduct = req.body;
-  try {
-    await productManager.addProduct(newProduct);
+router.post("/products", productController.createProduct);
 
-    res.status(201).json({
-      message: "Producto agregado exitosamente",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+router.put("/products/:pid", productController.updateProduct);
 
-router.put("/products/:pid", async (req, res) => {
-  let id = req.params.pid;
-  const product = await req.body;
-  try {
-    await productManager.updateProduct(id, product);
-    res.json({
-      message: "Producto actualizado exitosamente",
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.delete("/products/:pid", async (req, res) => {
-  const id = req.params.pid;
-  try {
-    const deletedProduct = await productManager.deleteProduct(id);
-
-    if (!deletedProduct) {
-      return res
-        .status(404)
-        .send({ message: "El producto que desea borrar, no existe" });
-    }
-
-    res.status(200).send({
-      message: "Producto eliminado correctamente",
-      deletedProduct: deletedProduct,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: "Error interno del servidor" });
-  }
-});
+router.delete("/products/:pid", productController.deleteProduct);
 
 
 module.exports = router;
