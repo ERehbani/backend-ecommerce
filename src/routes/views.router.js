@@ -18,6 +18,14 @@ function viewsRouter() {
 
   router.get("/register", viewsController.viewRegister);
 
+  router.get("/profile", viewsController.viewPerfil);
+
+  router.get("/", (req, res) => res.render("home"));
+
+  router.get("/realtimeproducts", viewsController.realTimeProducts)
+
+  router.get("/chat", viewsController.chat)
+
   return router;
 }
 

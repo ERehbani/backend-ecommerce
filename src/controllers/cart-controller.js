@@ -1,12 +1,16 @@
 const CartService = require("../services/cart-service");
 const cartSevice = new CartService();
+const ProductService = require("../services/product-service")
+const productService = new ProductService()
 
 class CartController {
   async createCart(req, res) {
     try {
-      const newCart = await cartSevice.crearCart();
+      const newCart = new CartModel({ products: [] });
+      const savedCart = await newCart.save();
       if (newCart) {
         res.json({ message: "Carrito creado con éxito", cart: newCart });
+        return savedCart;
       } else {
         res.status(404).json({ error: "No se pudo crear el carrito" });
       }
@@ -97,22 +101,27 @@ class CartController {
 
   async deleteCart(req, res) {
     try {
-        const cartId = req.params.cid;
-        const updatedCart = await cartSevice.cleanCart(cartId);
-    
-        res.json({
-          status: "success",
-          message:
-            "Todos los productos del carrito fueron eliminados correctamente",
-          updatedCart,
-        });
-      } catch (error) {
-        console.error("Error al vaciar el carrito", error);
-        res.status(500).json({
-          status: "error",
-          error: "Error interno del servidor",
-        });
-      }
+      const cartId = req.params.cid;
+      const updatedCart = await cartSevice.cleanCart(cartId);
+
+      res.json({
+        status: "success",
+        message:
+          "Todos los productos del carrito fueron eliminados correctamente",
+        updatedCart,
+      });
+    } catch (error) {
+      console.error("Error al vaciar el carrito", error);
+      res.status(500).json({
+        status: "error",
+        error: "Error interno del servidor",
+      });
+    }
+  }
+
+  async purchaseTicket(req, res) {
+    const productos = await productService.getProducts()
+    return res.send(productos)
   }
 }
 

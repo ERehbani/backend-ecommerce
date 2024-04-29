@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const productsRouter = require("./routes/products.router");
+const SocketManager = require("./sockets/socketManager");
 const cartRouter = require("./routes/cart.router");
 const userRouter = require("./routes/user.router");
 const sessionRouter = require("./routes/sessions.router");
@@ -11,6 +12,7 @@ const MessageModel = require("./dao/models/message.model");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const passport = require("passport");
+const cookieParser = require("cookie-parser");
 const initializePassport = require("./config/passport.config");
 require("./database");
 
@@ -42,6 +44,7 @@ app.use(
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 app.engine("hbs", exphbs.engine());
 app.set("view engine", "hbs");
 app.set("views", "./src/views");
@@ -70,3 +73,5 @@ io.on("connection", (socket) => {
     socket.emit("message", messages);
   });
 });
+
+new SocketManager(httpServer);

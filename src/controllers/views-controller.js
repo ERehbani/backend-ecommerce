@@ -1,12 +1,16 @@
 const ProductService = require("../services/product-service");
 const productService = new ProductService();
-const CartService = require("../services/cart-service")
-const cartService = new CartService()
+const CartService = require("../services/cart-service");
+const cartService = new CartService();
+const SocketManager = require("../sockets/socketManager");
+const socketManager = new SocketManager();
 
 class ViewsController {
   async viewProducts(req, res) {
-    console.log(req.session.usuario);
     try {
+      if(req.session.usuario.role === "Admin") {
+        res.send("Esta ruta está restringida para el administrador")
+      }
       const { page = 1, limit = 5 } = req.query;
       const productos = await productService.getProducts({
         page: parseInt(page),
@@ -79,7 +83,40 @@ class ViewsController {
   }
 
   async viewRegister(req, res) {
-    res.render("register")
+    res.render("register");
+  }
+
+  async viewPerfil(req, res) {
+    if (!req.session.usuario) {
+      res.redirect("/login");
+    } else {
+      const isAdmin = req.session.usuario.role === "Admin";
+      res.render("profile", { user: req.session.usuario, isAdmin });
+    }
+  }
+
+  async realTimeProducts(req, res) {
+    try {
+      if (req.session.usuario.role === "Admin") {
+        res.render("realTimeProducts");
+      } else {
+        res.redirect("/profile");
+      }
+    } catch (error) {
+      console.log("error en la vista real time", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+  async chat(req, res) {
+    try {
+      if (req.session.usuario.role === "Admin") {
+        res.redirect("/products");
+      }
+      res.render("chat");
+    } catch (error) {
+      console.log("error en la vista chat", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
   }
 }
 

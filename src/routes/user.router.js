@@ -55,6 +55,6 @@ router.post(
 
 router.get("/failedregister", userController.failedRegister);
 
-router.get("/current", (req, res) => userController.currentUser);
+router.get("/profile", userController.currentUser);
 
 module.exports = router;

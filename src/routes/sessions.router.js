@@ -20,6 +20,13 @@ router.get(
   passport.authenticate("github", { failureRedirect: "/login" }),
   userController.loginGitHub
 );
+router.get("/profile", (req, res) => {
+  if(req.session.usuario) {
+      res.render("profile", {user: req.session.usuario});
+  } else {
+      res.redirect("/login");
+  }
+})
 
 router.get("/logout", userController.logOut);
 

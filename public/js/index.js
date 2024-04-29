@@ -1,46 +1,55 @@
-// Creamos uyna instancia de socket.io del lado del clinete
 const socket = io();
-console.log("ooawieoweiowieo");
 
-// Creamos una variable para guardar el usuario:
-
-let user;
-
-const chatBox = document.getElementById("chatBox");
-
-// Sweet Alert 2: es una libreria que nos permite crear alertas personalizadas
-
-// Swal es unobjeto global que nos permite usar los metodos de la libreria
-// Fire es un método nos permite configurar el alerta
-
-Swal.fire({
-  title: "Identificate",
-  input: "text",
-  text: "Ingresa un usuario para identificarte en el chat",
-  inputValidator: (value) => {
-    return !value && "Necesitas escribir un nombre para continuar";
-  },
-  allowOutsideClick: false,
-}).then((result) => {
-  user = result.value;
+socket.on("products", (data) => {
+  //console.log(data);
+  renderProductos(data);
 });
 
-chatBox.addEventListener("keyup", (event) => {
-  if (event.key === "Enter") {
-    if (chatBox.value.trim().length > 0) {
-      // con socket.emit se envian los valores y con on se reciben
-      socket.emit("message", { user: user, message: chatBox.value });
-      chatBox.value = "";
-    }
-  }
-});
+//Función para renderizar nuestros productos:
 
-socket.on("message", (data) => {
-  let log = document.getElementById("message");
-  let messages = "";
+const renderProductos = (productos) => {
+  const contenedorProductos = document.getElementById("contenedorProductos");
+  contenedorProductos.innerHTML = "";
 
-  data.forEach((message) => {
-    messages = messages + `${message.user} dice: ${message.message} <br>`;
+  productos.docs.forEach((item) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    card.innerHTML = ` 
+                        <p> ${item.title} </p>
+                        <p> ${item.price} </p>
+                        <button> Eliminar </button>
+                        `;
+
+    contenedorProductos.appendChild(card);
+    //Agregamos el evento al boton de eliminar:
+    card.querySelector("button").addEventListener("click", () => {
+      eliminarProducto(item._id);
+    });
   });
-  log.innerHTML = messages
+};
+
+const eliminarProducto = (id) => {
+  socket.emit("deleteProducts", id);
+};
+
+//Agregamos productos del formulario:
+
+document.getElementById("btnEnviar").addEventListener("click", () => {
+  agregarProducto();
 });
+
+const agregarProducto = () => {
+  const producto = {
+    title: document.getElementById("title").value,
+    description: document.getElementById("description").value,
+    price: document.getElementById("price").value,
+    img: document.getElementById("img").value,
+    code: document.getElementById("code").value,
+    stock: document.getElementById("stock").value,
+    category: document.getElementById("category").value,
+    status: document.getElementById("status").value === "true",
+  };
+
+  socket.emit("addProduct", producto);
+};

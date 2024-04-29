@@ -2,10 +2,10 @@
 
 {{#if user}}
   <h2>Bienvenido/a {{user.first_name}} {{user.last_name}}!!!</h2>
+<a href="/profile">Perfil</a>
   <b>ya va a llegar el dia en el que voy a estilizar esto y vas a quedar re loco
     fede vas a ver sólo dame 3 meses más</b>
 {{/if}}
-
 {{#if req}}
   <a href="/api/logout">Logout</a>
 {{/if}}
@@ -26,3 +26,5 @@
 {{#if hasPrevPage}}
   <a href="/products?page={{prevPage}}"> Anterior </a>
 {{/if}}
+
+

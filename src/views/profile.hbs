@@ -1,0 +1,10 @@
+<a href="/products">{«}</a>
+
+<h1>Perfil</h1>
+
+<p>Bienvenido/a {{user.first_name}} {{user.last_name}}</p>
+<p>rol: {{user.role}}</p>
+
+{{#if isAdmin}}
+  <a href="/realtimeproducts">Modificar productos</a>
+{{/if}}

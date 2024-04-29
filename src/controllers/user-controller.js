@@ -1,24 +1,38 @@
 const { createHash, isValidPassword } = require("../utils/hashBcrypt");
 const UserService = require("../services/user-service");
+const UserDTO = require("../dto/user.dto");
 const userService = new UserService();
+const CartModel = require("../dao/models/cart.model");
+const UserModel = require("../dao/models/user.model");
+const CartService = require("../services/cart-service");
+const cartSevice = new CartService();
 
 class UserController {
   async createUser(req, res) {
-    if (!req.usuario)
-      return res
-        .status(400)
-        .send({ status: "error", error: "No se pudo crear el usuario" });
+    try {
+      const { first_name, last_name, email, password, age } = req.body;
+      const userExist = await UserModel.findOne({ email });
+      if (userExist) return res.status(400).send("El usuario ya existe");
 
-    req.session.usuario = {
-      first_name: req.usuario.first_name,
-      last_name: req.usuario.last_name,
-      password: createHash(req.usuario.password),
-      email: req.usuario.email,
-      age: req.usuario.age,
-      role: "User",
-    };
-    req.session.login = true;
-    res.redirect("/products");
+      const newCart = new CartModel();
+      await newCart.save();
+      console.log(newCart);
+      const newUser = new UserModel({
+        first_name,
+        last_name,
+        email,
+        cart: newCart._id,
+        password: createHash(password),
+        age,
+      });
+      console.log(newUser);
+      await newUser.save();
+      res.redirect("/login");
+      res.send("Usuario creado con éxito");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Error al crear un usuario en el controlador");
+    }
   }
 
   async failedRegister(req, res) {
@@ -26,13 +40,18 @@ class UserController {
   }
 
   async currentUser(req, res) {
-    console.log(req.session.usuario, "REQ:SESSION:TRUE");
     if (!req.session.usuario) {
-      return res.json({
-        message: "Debe estar autenticado para acceder a esta sección",
-      });
+      res.redirect("/login");
     }
-    res.json(req.session.usuario);
+    const userDTO = new UserDTO(
+      req.session.usuario.first_name,
+      req.session.usuario.last_name,
+      req.session.usuario.role
+    );
+    console.log(req.session.usuario.role);
+    const isAdmin = req.session.usuario.role === "Admin";
+    console.log({ "ADDDMIIINN:": isAdmin });
+    res.render("profile", { user: userDTO, isAdmin });
   }
 
   async loginUser(req, res) {
@@ -44,7 +63,7 @@ class UserController {
         if (isValidPassword(usuario, password)) {
           req.session.login = true;
           req.session.usuario = usuario;
-          res.redirect("/products");
+          res.redirect("/profile");
         } else {
           res.status(400).send({ error: "Contraseña incorrecta ❌" });
         }
