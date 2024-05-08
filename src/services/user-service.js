@@ -9,6 +9,14 @@ class UserService {
       console.log(error);
     }
   }
+
+  async getCartsUser(cartId) {
+  try {
+    await UserModel.find({ cart: cartId });
+  } catch (error) {
+    console.log(error) 
+  }
+  }
 }
 
 module.exports = UserService;

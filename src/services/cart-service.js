@@ -1,4 +1,5 @@
 const CartModel = require("../dao/models/cart.model");
+const ProductModel = require("../dao/models/product.model");
 
 class CartService {
   async crearCart() {
@@ -14,7 +15,7 @@ class CartService {
 
   async getCartById(cartId) {
     try {
-      const cart = await CartModel.findById(cartId).populate('products');
+      const cart = await CartModel.findById(cartId).populate("products");
       if (!cart) {
         console.log("No existe el carrito con el id" + cartId);
         return null;
@@ -23,7 +24,7 @@ class CartService {
       return cart;
     } catch (error) {
       console.log("Error al traer el carrito por id");
-      throw error
+      throw error;
     }
   }
 
@@ -87,20 +88,22 @@ class CartService {
   }
 
   async updateQuantity(cartId, productId, newQuantity) {
-  try {
-    const cart = await CartModel.findById(cartId);
-    const products = cart.products.findIndex((product) => product._id === productId);
-    if (products !== 1) {
-      cart.products[products].quantity = newQuantity;
-      await cart.save();
-      res.json({
-        status: "success",
-        message: "La cantidad del producto fue actualizada",
-      });
+    try {
+      const cart = await CartModel.findById(cartId);
+      const products = cart.products.findIndex(
+        (product) => product._id === productId
+      );
+      if (products !== 1) {
+        cart.products[products].quantity = newQuantity;
+        await cart.save();
+        res.json({
+          status: "success",
+          message: "La cantidad del producto fue actualizada",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ status: "error", message: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
-  }
   }
 
   async cleanCart(cartId) {
@@ -111,14 +114,24 @@ class CartService {
         { new: true }
       );
 
-      if(!cart) {
-        throw new Error("Carrito no encontrado")
+      if (!cart) {
+        throw new Error("Carrito no encontrado");
       }
 
-      return cart
+      return cart;
     } catch (error) {
-      console.log("Error al vaciar el carrito", error)
-      throw error
+      console.log("Error al vaciar el carrito", error);
+      throw error;
+    }
+  }
+
+  async purchaseTicket(cartID) {
+    try {
+      const cart = await CartModel.findById(cartID);
+      console.log(cart)
+      return cart;
+    } catch (error) {
+      console.error("Error al comprar el ticket en service", error);
     }
   }
 }

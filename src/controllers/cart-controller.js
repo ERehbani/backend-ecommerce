@@ -1,7 +1,11 @@
 const CartService = require("../services/cart-service");
 const cartSevice = new CartService();
-const ProductService = require("../services/product-service")
-const productService = new ProductService()
+const ProductService = require("../services/product-service");
+const productService = new ProductService();
+const UserService = require("../services/user-service");
+const userService = new UserService();
+const TicketModel = require("../dao/models/ticket.model");
+const { generateUniqueCode, calcularTotal } = require("../utils/cartUtils");
 
 class CartController {
   async createCart(req, res) {
@@ -120,8 +124,49 @@ class CartController {
   }
 
   async purchaseTicket(req, res) {
-    const productos = await productService.getProducts()
-    return res.send(productos)
+    try {
+      const { cid } = req.params;
+      console.log(cid);
+      const cart = await cartSevice.getCartById(cid);
+      const products = cart.products;
+
+      const productsNotAvailable = [];
+
+      for (const item of products) {
+        const productId = item.product;
+        const product = await productService.getProductById(productId);
+        if (product.stock >= item.quantity) {
+          product.stock -= item.quantity;
+          await product.save();
+        } else {
+          productsNotAvailable.push(productId);
+        }
+      }
+
+      const userWithCart = await userService.getCartsUser(cid);
+      const ticket = new TicketModel({
+        code: generateUniqueCode(),
+        purchase_datetime: new Date(),
+        amount: calcularTotal(cart.products),
+        purchaser: userWithCart._id,
+      });
+
+      await ticket.save();
+
+      cart.products = cart.products.filter((item) =>
+        productsNotAvailable.some((productId) => productId.equals(item.product))
+      );
+
+      await cart.save()
+
+     res.status(200).json({productsNotAvailable})
+    } catch (error) {
+      console.error("Error al vaciar el carrito", error);
+      res.status(500).json({
+        status: "error",
+        error: "Error en el controlador al comprar un ticket",
+      });
+    }
   }
 }
 
