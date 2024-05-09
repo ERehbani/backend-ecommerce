@@ -15,9 +15,8 @@ class CartController {
       if (newCart) {
         res.json({ message: "Carrito creado con éxito", cart: newCart });
         return savedCart;
-      } else {
-        res.status(404).json({ error: "No se pudo crear el carrito" });
       }
+      res.status(404).json({ error: "No se pudo crear el carrito" });
     } catch (error) {
       console.log(error, "Error al crear un nuevo carrito");
       res.status(500).json({ error: "Error del servidor" });
@@ -126,7 +125,6 @@ class CartController {
   async purchaseTicket(req, res) {
     try {
       const { cid } = req.params;
-      console.log(cid);
       const cart = await cartSevice.getCartById(cid);
       const products = cart.products;
 
@@ -144,6 +142,7 @@ class CartController {
       }
 
       const userWithCart = await userService.getCartsUser(cid);
+      console.log(userWithCart)
       const ticket = new TicketModel({
         code: generateUniqueCode(),
         purchase_datetime: new Date(),
@@ -157,9 +156,9 @@ class CartController {
         productsNotAvailable.some((productId) => productId.equals(item.product))
       );
 
-      await cart.save()
+      await cart.save();
 
-     res.status(200).json({productsNotAvailable})
+      res.status(200).json({ productsNotAvailable });
     } catch (error) {
       console.error("Error al vaciar el carrito", error);
       res.status(500).json({

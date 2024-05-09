@@ -17,7 +17,6 @@ const initializePassport = () => {
           let user = await User.findOne({ email: username });
         //   console.log(user);
           if (user) {
-            console.log("El usuario ya existe");
             return done(null, false);
           }
           const newUser = {
@@ -31,7 +30,7 @@ const initializePassport = () => {
           let result = await User.create(newUser);
           return done(null, result);
         } catch (error) {
-          return done("Error al registrar el usuario" + error);
+          return done(`Error al registrar el usuario ${error}`);
         }
       }
     )

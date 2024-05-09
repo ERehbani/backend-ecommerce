@@ -5,18 +5,24 @@ const userService = new UserService();
 const CartModel = require("../dao/models/cart.model");
 const UserModel = require("../dao/models/user.model");
 const CartService = require("../services/cart-service");
-const cartSevice = new CartService();
+const cartService = new CartService();
 
 class UserController {
   async createUser(req, res) {
     try {
       const { first_name, last_name, email, password, age } = req.body;
-      const userExist = await UserModel.findOne({ email });
-      if (userExist) return res.status(400).send("El usuario ya existe");
+     
+     
 
-      const newCart = new CartModel();
-      await newCart.save();
-      console.log(newCart);
+   
+        const createCart = await cartService.crearCart()
+        console.log(createCart)
+        const newCart = await createCart.save();
+        console.log("NEW CART",newCart);
+
+           
+        const userExist = await userService.getUserByEmail(email);
+        if (userExist) return res.status(400).send("El usuario ya existe");
       const newUser = new UserModel({
         first_name,
         last_name,
@@ -24,8 +30,9 @@ class UserController {
         cart: newCart._id,
         password: createHash(password),
         age,
+        role: "user"
       });
-      console.log(newUser);
+
       await newUser.save();
       res.redirect("/login");
       res.send("Usuario creado con éxito");
@@ -33,7 +40,12 @@ class UserController {
       console.log(error);
       res.status(500).send("Error al crear un usuario en el controlador");
     }
-  }
+}
+
+
+
+
+  
 
   async failedRegister(req, res) {
     res.send({ error: "Registro fallido" });
@@ -80,7 +92,7 @@ class UserController {
     console.log("req.user", req.user);
     req.session.usuario = req.user;
     req.session.login = true;
-    req.session.save(function (err) {
+    req.session.save((err) => {
       if (err) {
         console.log(err);
       } else {
