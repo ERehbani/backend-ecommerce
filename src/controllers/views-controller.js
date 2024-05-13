@@ -8,23 +8,21 @@ const socketManager = new SocketManager();
 class ViewsController {
   async viewProducts(req, res) {
     try {
-      if(req.session.usuario.role === "Admin") {
-        res.send("Esta ruta está restringida para el administrador")
-      }
+      // if(req.session.usuario.role === "Admin") {
+      //   res.send("Esta ruta está restringida para el administrador")
+      // }
+      console.log(req.session.login, req.session.usuario)
+      if (!req.session.login) return res.redirect("/login");
       const { page = 1, limit = 5 } = req.query;
       const productos = await productService.getProducts({
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: Number.parseInt(page),
+        limit: Number.parseInt(limit),
       });
 
       const nuevoArray = productos.docs.map((producto) => {
         const { _id, ...rest } = producto.toObject();
         return { _id, ...rest };
-      });
-
-      console.log({ user: req.session.usuario });
-
-      if (!req.session.login) res.redirect("/login");
+      })
 
       res.render("products", {
         nuevoArray,

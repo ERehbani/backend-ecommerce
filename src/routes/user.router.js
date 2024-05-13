@@ -47,9 +47,9 @@ const userController = new UserController();
 
 router.post(
   "/sessions",
-  passport.authenticate("register", {
-    failureRedirect: "/failedregister",
-  }),
+  // passport.authenticate("register", {
+  //   failureRedirect: "/failedregister",
+  // }),
   userController.createUser
 );
 

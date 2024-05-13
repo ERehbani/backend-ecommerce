@@ -11,18 +11,15 @@ class UserController {
   async createUser(req, res) {
     try {
       const { first_name, last_name, email, password, age } = req.body;
-     
-     
 
-   
-        const createCart = await cartService.crearCart()
-        console.log(createCart)
-        const newCart = await createCart.save();
-        console.log("NEW CART",newCart);
+      const userExist = await userService.getUserByEmail(email);
+      if (userExist) return res.status(400).send("El usuario ya existe");
 
-           
-        const userExist = await userService.getUserByEmail(email);
-        if (userExist) return res.status(400).send("El usuario ya existe");
+      const createCart = await cartService.crearCart();
+      console.log(createCart);
+      const newCart = await createCart.save();
+      console.log("NEW CART", newCart);
+
       const newUser = new UserModel({
         first_name,
         last_name,
@@ -30,22 +27,16 @@ class UserController {
         cart: newCart._id,
         password: createHash(password),
         age,
-        role: "user"
+        role: "User",
       });
 
       await newUser.save();
       res.redirect("/login");
-      res.send("Usuario creado con éxito");
     } catch (error) {
       console.log(error);
       res.status(500).send("Error al crear un usuario en el controlador");
     }
-}
-
-
-
-
-  
+  }
 
   async failedRegister(req, res) {
     res.send({ error: "Registro fallido" });
@@ -75,6 +66,7 @@ class UserController {
         if (isValidPassword(usuario, password)) {
           req.session.login = true;
           req.session.usuario = usuario;
+          console.log({ usuarioInController: req.session.usuario });
           res.redirect("/profile");
         } else {
           res.status(400).send({ error: "Contraseña incorrecta ❌" });

@@ -2,6 +2,9 @@ const passport = require("passport");
 const local = require("passport-local");
 const User = require("../dao/models/user.model");
 const { createHash, isValidPassword } = require("../utils/hashBcrypt");
+const UserService = require("../services/user-service");
+const { json } = require("express");
+const userService = new UserService();
 const GithubStrategy = require("passport-github2").Strategy;
 
 const LocalStrategy = local.Strategy;
@@ -14,8 +17,8 @@ const initializePassport = () => {
       async (req, username, password, done) => {
         const { first_name, last_name, email, age, role } = req.body;
         try {
-          let user = await User.findOne({ email: username });
-        //   console.log(user);
+          const user = await User.findOne({ email: username });
+          //   console.log(user);
           if (user) {
             return done(null, false);
           }
@@ -27,10 +30,36 @@ const initializePassport = () => {
             age,
             role: "User",
           };
-          let result = await User.create(newUser);
+          const result = await User.create(newUser);
           return done(null, result);
         } catch (error) {
           return done(`Error al registrar el usuario ${error}`);
+        }
+      }
+    )
+  );
+
+  passport.use(
+    "local",
+    new LocalStrategy(
+      { passReqToCallback: true, usernameField: "email" },
+      async (req, email, password, done) => {
+        try {
+          const user = await User.findOne({ email });
+
+          if (user) {
+            if (isValidPassword(user, password)) {
+              req.session.login = true;
+              req.session.usuario = user;
+              console.log(req.session.usuario)
+              return done(null, user);
+            }
+            return done(null, false);
+          }
+          return done(null, false); // User does not exist
+        } catch (error) {
+          console.log("passport-config", error);
+          done(error);
         }
       }
     )
@@ -45,24 +74,23 @@ const initializePassport = () => {
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log(accessToken, refreshToken)
+        console.log(accessToken, refreshToken);
         try {
           console.log(profile);
-          let user = await User.findOne({ email: profile.email });
+          const user = await User.findOne({ email: profile.email });
           if (!user) {
-            let newUser = {
+            const newUser = {
               first_name: profile.username,
               last_name: profile.displayName,
               email: profile.email,
               password: "",
               age: 18,
-              role: "user",
+              role: "User",
             };
-            let result = await User.create(newUser);
+            const result = await User.create(newUser);
             return done(null, result);
-          } else {
-            done(null, user);
           }
+          done(null, user);
         } catch (error) {
           return done(error);
         }
@@ -76,7 +104,7 @@ const initializePassport = () => {
 
   passport.deserializeUser(async (id, done) => {
     try {
-      let user = await User.findById(id);
+      const user = await User.findById(id);
       done(null, user);
     } catch (error) {
       done(error);

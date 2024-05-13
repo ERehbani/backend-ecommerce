@@ -5,10 +5,16 @@ const { isValidPassword } = require("../utils/hashBcrypt");
 const passport = require("passport");
 const UserController = require("../controllers/user-controller");
 const userController = new UserController();
+const ViewsController = require("../controllers/views-controller")
+const viewsController = new ViewsController()
 
 // Login
 
-router.post("/sessionLogin", userController.loginUser);
+router.post("/sessionLogin",
+  passport.authenticate("local", { failureRedirect: "/login", succe }),
+  viewsController.viewProducts
+);
+
 
 router.get(
   "/sessions/github",

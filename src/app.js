@@ -27,11 +27,10 @@ app.use(
     extended: true,
   })
 );
-
 app.use(express.json());
 app.use(
   session({
-    secret: "secretCoder",
+    secret: "secret",
     resave: true,
     saveUninitialized: true,
     store: MongoStore.create({
@@ -43,8 +42,9 @@ app.use(
 );
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(cookieParser());
+app.use(passport.session())
+
+app.use(cookieParser('secret'));
 app.engine("hbs", exphbs.engine());
 app.set("view engine", "hbs");
 app.set("views", "./src/views");
