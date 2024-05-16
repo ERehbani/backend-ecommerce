@@ -8,6 +8,7 @@ const sessionRouter = require("./routes/sessions.router");
 const viewsRouter = require("./routes/views.router");
 const exphbs = require("express-handlebars");
 const socketIO = require("socket.io");
+const cors = require("cors");
 const MessageModel = require("./dao/models/message.model");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -16,12 +17,19 @@ const cookieParser = require("cookie-parser");
 const initializePassport = require("./config/passport.config");
 require("./database");
 
+const hbs = exphbs.create({
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
+});
+
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer);
 
 app.use("/public", express.static("public"));
-
+app.use(cors());
 app.use(
   express.urlencoded({
     extended: true,
@@ -42,9 +50,9 @@ app.use(
 );
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session())
+app.use(passport.session());
 
-app.use(cookieParser('secret'));
+app.use(cookieParser("secret"));
 app.engine("hbs", exphbs.engine());
 app.set("view engine", "hbs");
 app.set("views", "./src/views");

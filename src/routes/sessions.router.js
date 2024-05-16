@@ -5,16 +5,19 @@ const { isValidPassword } = require("../utils/hashBcrypt");
 const passport = require("passport");
 const UserController = require("../controllers/user-controller");
 const userController = new UserController();
-const ViewsController = require("../controllers/views-controller")
-const viewsController = new ViewsController()
+const ViewsController = require("../controllers/views-controller");
+const viewsController = new ViewsController();
 
 // Login
 
-router.post("/sessionLogin",
-  passport.authenticate("local", { failureRedirect: "/login", succe }),
+router.post(
+  "/sessionLogin",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    successRedirect: "/products",
+  }),
   viewsController.viewProducts
 );
-
 
 router.get(
   "/sessions/github",
@@ -27,12 +30,12 @@ router.get(
   userController.loginGitHub
 );
 router.get("/profile", (req, res) => {
-  if(req.session.usuario) {
-      res.render("profile", {user: req.session.usuario});
+  if (req.session.usuario) {
+    res.render("profile", { user: req.session.usuario });
   } else {
-      res.redirect("/login");
+    res.redirect("/login");
   }
-})
+});
 
 router.get("/logout", userController.logOut);
 

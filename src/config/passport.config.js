@@ -52,6 +52,7 @@ const initializePassport = () => {
               req.session.login = true;
               req.session.usuario = user;
               console.log(req.session.usuario)
+
               return done(null, user);
             }
             return done(null, false);

@@ -4,15 +4,18 @@ const CartService = require("../services/cart-service");
 const cartService = new CartService();
 const SocketManager = require("../sockets/socketManager");
 const socketManager = new SocketManager();
+const User = require("../dao/models/user.model");
 
 class ViewsController {
   async viewProducts(req, res) {
     try {
-      // if(req.session.usuario.role === "Admin") {
-      //   res.send("Esta ruta está restringida para el administrador")
-      // }
-      console.log(req.session.login, req.session.usuario)
-      if (!req.session.login) return res.redirect("/login");
+      const findUser = await User.findById(req.session.passport.user);
+      req.session.usuario = findUser;
+      if (req.session.usuario.role === "Admin") {
+        res.send("Esta ruta está restringida para el administrador");
+      }
+
+      if (!req.user) return res.redirect("/login");
       const { page = 1, limit = 5 } = req.query;
       const productos = await productService.getProducts({
         page: Number.parseInt(page),
@@ -22,7 +25,7 @@ class ViewsController {
       const nuevoArray = productos.docs.map((producto) => {
         const { _id, ...rest } = producto.toObject();
         return { _id, ...rest };
-      })
+      });
 
       res.render("products", {
         nuevoArray,
