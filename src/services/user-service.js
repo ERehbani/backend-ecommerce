@@ -1,3 +1,4 @@
+const  mongoose = require("mongoose");
 const UserModel = require("../dao/models/user.model");
 
 class UserService {
@@ -11,11 +12,16 @@ class UserService {
   }
 
   async getCartsUser(cartId) {
-  try {
-    await UserModel.find({ cart: cartId });
-  } catch (error) {
-    console.log(error) 
-  }
+    try {
+      const user = await UserModel.findOne({ cart: new mongoose.Types.ObjectId(cartId) });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }
 

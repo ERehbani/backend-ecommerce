@@ -2,21 +2,28 @@ const ProductService = require("../services/product-service");
 const productService = new ProductService();
 const CartService = require("../services/cart-service");
 const cartService = new CartService();
-const SocketManager = require("../sockets/socketManager");
-const socketManager = new SocketManager();
 const User = require("../dao/models/user.model");
+const UserDTO = require("../dto/user.dto.js");
 
 class ViewsController {
   async viewProducts(req, res) {
     try {
+      const userDto = new UserDTO(
+        req.user.first_name,
+        req.user.last_name,
+        req.user.role,
+        req.user.age,
+        req.user.email
+      );
+
       const findUser = await User.findById(req.session.passport.user);
-      req.session.usuario = findUser;
-      if (req.session.usuario.role === "Admin") {
+      if (findUser) req.session.login = true;
+
+      if (req.user.role === "admin") {
         res.send("Esta ruta está restringida para el administrador");
       }
-
-      if (!req.user) return res.redirect("/login");
       const { page = 1, limit = 5 } = req.query;
+
       const productos = await productService.getProducts({
         page: Number.parseInt(page),
         limit: Number.parseInt(limit),
@@ -26,11 +33,11 @@ class ViewsController {
         const { _id, ...rest } = producto.toObject();
         return { _id, ...rest };
       });
-
+      req.session.usuario = userDto
       res.render("products", {
         nuevoArray,
         req: req.session.login,
-        user: req.session.usuario,
+        user: userDto,
       });
     } catch (error) {
       console.error("Error al obtener productos", error);
@@ -88,7 +95,7 @@ class ViewsController {
   }
 
   async viewPerfil(req, res) {
-    if (!req.session.usuario) {
+    if (!req.session.login) {
       res.redirect("/login");
     } else {
       const isAdmin = req.session.usuario.role === "Admin";

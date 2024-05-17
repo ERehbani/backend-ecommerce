@@ -126,7 +126,16 @@ class CartController {
     try {
       const { cid } = req.params;
       const cart = await cartSevice.getCartById(cid);
+
       const products = cart.products;
+
+      console.log(cart.products[0].quantity, products.stock);
+      if (cart.products[0].quantity > products.stock || !products.stock) {
+        return res.status(401).json({
+          "La compra no puede ser realizada ya que no hay el stock necesario de este producto":
+            products,
+        });
+      }
 
       const productsNotAvailable = [];
 
@@ -142,7 +151,7 @@ class CartController {
       }
 
       const userWithCart = await userService.getCartsUser(cid);
-      console.log(userWithCart)
+
       const ticket = new TicketModel({
         code: generateUniqueCode(),
         purchase_datetime: new Date(),
@@ -158,7 +167,15 @@ class CartController {
 
       await cart.save();
 
-      res.status(200).json({ productsNotAvailable });
+      res.status(200).json({
+        ticket,
+        product: {
+          title: products.title,
+          price: products.price,
+          stock: products.stock,
+          category: products.category,
+        },
+      });
     } catch (error) {
       console.error("Error al vaciar el carrito", error);
       res.status(500).json({

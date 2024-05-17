@@ -17,7 +17,7 @@ class CartService {
     try {
       const cart = await CartModel.findById(cartId).populate("products");
       if (!cart) {
-        console.log("No existe el carrito con el id" + cartId);
+        console.log(`No existe el carrito con el id ${cartId}`);
         return null;
       }
 
@@ -30,22 +30,22 @@ class CartService {
 
   async addProductToCart(cartId, productId, quantity = 1) {
     try {
-      const cart = await this.getCartById(cartId);
-      const existProduct = cart.products.find(
-        (item) => item.product.toString() === productId
+      const carrito = await this.getCartById(cartId);
+      const existeProducto = carrito.products.find(
+        (item) => item.product._id.toString() === productId
       );
 
-      if (existProduct) {
-        existProduct.quantity += quantity;
+      if (existeProducto) {
+        existeProducto.quantity += quantity;
       } else {
-        cart.products.push({ product: productId, quantity });
+        carrito.products.push({ product: productId, quantity });
       }
 
-      //   Marcar la propiedad products como modificada antes de guardar
-      cart.markModified("products");
+      //Vamos a marcar la propiedad "products" como modificada antes de guardar:
+      carrito.markModified("products");
 
-      await cart.save();
-      return cart;
+      await carrito.save();
+      return carrito;
     } catch (error) {
       console.log("Error al agregar un producto", error);
     }
@@ -128,7 +128,7 @@ class CartService {
   async purchaseTicket(cartID) {
     try {
       const cart = await CartModel.findById(cartID);
-      console.log(cart)
+      console.log(cart);
       return cart;
     } catch (error) {
       console.error("Error al comprar el ticket en service", error);
