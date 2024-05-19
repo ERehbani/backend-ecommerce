@@ -15,6 +15,7 @@ const MongoStore = require("connect-mongo");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const initializePassport = require("./config/passport.config");
+const handleError = require("./middleware/error.js");
 require("./database");
 
 const hbs = exphbs.create({
@@ -66,6 +67,7 @@ app.use("/api", cartRouter);
 app.use("/api", userRouter);
 app.use("/api", sessionRouter);
 
+app.use(handleError)
 httpServer.listen(8080, () => {
   console.log("8080 🌎");
 });

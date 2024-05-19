@@ -51,9 +51,19 @@ const initializePassport = () => {
             if (isValidPassword(user, password)) {
               req.session.login = true;
               req.session.usuario = user;
-              console.log(req.session.usuario)
+              console.log(req.session.usuario);
 
               return done(null, user);
+            } else {
+              CustomError.crearError({
+                nombre: "Login",
+                causa: generateErrorInfo({
+                  email,
+                  password,
+                }),
+                mensaje: "Error al iniciar sesión",
+                codigo: EErrors.TIPO_INVALIDO,
+              });
             }
             return done(null, false);
           }

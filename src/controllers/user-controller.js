@@ -5,14 +5,32 @@ const userService = new UserService();
 const CartModel = require("../dao/models/cart.model");
 const UserModel = require("../dao/models/user.model");
 const CartService = require("../services/cart-service");
+const CustomError = require("../services/errors/custom-error");
 const cartService = new CartService();
+const { generateErrorUser, generateErrorLoginGithub } = require("../services/errors/info");
+const { EErrors } = require("../services/errors/enums");
 
 class UserController {
   async createUser(req, res) {
     try {
       const { first_name, last_name, email, password, age } = req.body;
 
+      if (!first_name || !last_name || !email || !password || !age) {
+        CustomError.crearError({
+          nombre: "Usuario nuevo",
+          causa: generateErrorUser({
+            first_name,
+            last_name,
+            email,
+            password,
+            age,
+          }),
+          mensaje: "Error al intentar crear usuario",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       const userExist = await userService.getUserByEmail(email);
+      console.log(userExist);
       if (userExist) return res.status(400).send("El usuario ya existe");
 
       const createCart = await cartService.crearCart();
@@ -51,9 +69,7 @@ class UserController {
       req.session.usuario.last_name,
       req.session.usuario.role
     );
-    console.log(req.session.usuario.role);
     const isAdmin = req.session.usuario.role === "Admin";
-    console.log({ "ADDDMIIINN:": isAdmin });
     res.render("profile", { user: userDTO, isAdmin });
   }
 
@@ -81,12 +97,16 @@ class UserController {
   }
 
   async loginGitHub(req, res) {
-    console.log("req.user", req.user);
     req.session.usuario = req.user;
     req.session.login = true;
     req.session.save((err) => {
       if (err) {
-        console.log(err);
+        CustomError.crearError({
+          nombre: "Github Login",
+          causa: generateErrorLoginGithub(req.session.usuario, req.session.login),
+          mensaje: "Error al iniciar sesion con Github",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
       } else {
         res.redirect("/products");
       }
@@ -94,7 +114,6 @@ class UserController {
   }
 
   async logOut(req, res) {
-    console.log(req.session);
 
     if (req.session.login) {
       req.session.destroy();

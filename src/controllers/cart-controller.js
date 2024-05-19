@@ -6,6 +6,17 @@ const UserService = require("../services/user-service");
 const userService = new UserService();
 const TicketModel = require("../dao/models/ticket.model");
 const { generateUniqueCode, calcularTotal } = require("../utils/cartUtils");
+const {
+  generateErrorNew,
+  generateErrorGetId,
+  generateErrorUpdate,
+  generateErrorProductToCart,
+  generateErrorDelete,
+  generateErrorDeleteProductFromCart,
+  generateErrorUpdateQuantity,
+} = require("../services/errors/info");
+const { EErrors } = require("../services/errors/enums");
+const CustomError = require("../services/errors/custom-error");
 
 class CartController {
   async createCart(req, res) {
@@ -18,7 +29,12 @@ class CartController {
       }
       res.status(404).json({ error: "No se pudo crear el carrito" });
     } catch (error) {
-      console.log(error, "Error al crear un nuevo carrito");
+      CustomError.crearError({
+        nombre: "Crear un carrito",
+        causa: generateErrorNew(),
+        mensaje: "Error al crear un carrito",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({ error: "Error del servidor" });
     }
   }
@@ -30,7 +46,12 @@ class CartController {
       const cart = await cartSevice.getCartById(cartId);
       res.json(cart.products);
     } catch (error) {
-      console.log(error, "Error al obtener el carrito");
+      CustomError.crearError({
+        nombre: "Traer carrito por id",
+        causa: generateErrorGetId(id),
+        mensaje: "Error al intentar traer carrito por id",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
@@ -43,7 +64,12 @@ class CartController {
       const updatedCart = await cartSevice.updateCart(cartId, updatedProducts);
       res.json(updatedCart);
     } catch (error) {
-      console.error("Error al actualizar el carrito", error);
+      CustomError.crearError({
+        nombre: "Actualizar carrito",
+        causa: generateErrorUpdate(cartId, updatedProducts),
+        mensaje: "Error al actualizar el carrito",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({
         status: "error",
         error: "Error interno del servidor",
@@ -63,7 +89,12 @@ class CartController {
       );
       res.json(updateCart.products);
     } catch (error) {
-      console.log(error, "Error al sumar el producto al carrito");
+      CustomError.crearError({
+        nombre: "Agregar producto al carrito",
+        causa: generateErrorProductToCart(cartId, productId, quantity),
+        mensaje: "Error al agregar producto al carrito",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
@@ -79,7 +110,12 @@ class CartController {
         cart,
       });
     } catch (error) {
-      console.error("Error al eliminar el producto del carrito", error);
+      CustomError.crearError({
+        nombre: "Eliminar producto del carrito",
+        causa: generateErrorDeleteProductFromCart(cid, pid),
+        mensaje: "Error al eliminar producto del carrito",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({
         status: "error",
         error: "Error interno del servidor",
@@ -98,13 +134,19 @@ class CartController {
         cart,
       });
     } catch (error) {
+      CustomError.crearError({
+        nombre: "Actualizar cantidad",
+        causa: generateErrorUpdateQuantity(cid, pid, quantity),
+        mensaje: "Error al modificar la cantidad del producto en el carrito",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({ status: "error", message: error.message });
     }
   }
 
   async deleteCart(req, res) {
+    const cartId = req.params.cid;
     try {
-      const cartId = req.params.cid;
       const updatedCart = await cartSevice.cleanCart(cartId);
 
       res.json({
@@ -114,7 +156,12 @@ class CartController {
         updatedCart,
       });
     } catch (error) {
-      console.error("Error al vaciar el carrito", error);
+      CustomError.crearError({
+        nombre: "Eliminar carrito",
+        causa: generateErrorDelete(cartId),
+        mensaje: "Error al eliminar carrito",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({
         status: "error",
         error: "Error interno del servidor",
@@ -123,13 +170,11 @@ class CartController {
   }
 
   async purchaseTicket(req, res) {
+    const { cid } = req.params;
+    const cart = await cartSevice.getCartById(cid);
+
+    const products = cart.products;
     try {
-      const { cid } = req.params;
-      const cart = await cartSevice.getCartById(cid);
-
-      const products = cart.products;
-
-      console.log(cart.products[0].quantity, products.stock);
       if (cart.products[0].quantity > products.stock || !products.stock) {
         return res.status(401).json({
           "La compra no puede ser realizada ya que no hay el stock necesario de este producto":
@@ -177,7 +222,12 @@ class CartController {
         },
       });
     } catch (error) {
-      console.error("Error al vaciar el carrito", error);
+      CustomError.crearError({
+        nombre: "Realizar compra",
+        causa: generateErrorPurchaseTicket(cart, cid, products),
+        mensaje: "Error al realizar una compra",
+        codigo: EErrors.TIPO_INVALIDO,
+      });
       res.status(500).json({
         status: "error",
         error: "Error en el controlador al comprar un ticket",
