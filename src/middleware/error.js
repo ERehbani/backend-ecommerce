@@ -1,8 +1,8 @@
 const { EErrors } = require("../services/errors/enums.js");
 
 const handleError = (error, req, res, next) => {
-    console.log(error.causa);
-    console.log("Hola, hay alguien con vida aca? ");
+   req.logger.info(error.causa);
+    req.logger.info("Error en el middleware");
     switch (error.code) {
         case EErrors.TIPO_INVALIDO:
             res.send({ status: "error", error: error.nombre })

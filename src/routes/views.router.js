@@ -26,6 +26,15 @@ function viewsRouter() {
 
   router.get("/chat", viewsController.chat)
 
+  router.get("/loggertest", (req, res) => {
+    req.logger.error("Logger: Error");
+    req.logger.warning("Logger: Warning");
+    req.logger.info("Logger: Info");
+    req.logger.http("Logger: HTTP")
+  
+    res.send("Test de logs");
+  })
+
   return router;
 }
 

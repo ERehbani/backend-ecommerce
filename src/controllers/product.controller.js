@@ -14,7 +14,7 @@ class ProductController {
   async getProducts(req, res) {
     try {
       let { limit = 10, page = 1, sort, query } = req.query;
-      console.log(limit);
+     req.logger.info(limit);
       const response = await productService.getProducts(
         page,
         sort,

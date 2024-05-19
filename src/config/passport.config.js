@@ -51,7 +51,7 @@ const initializePassport = () => {
             if (isValidPassword(user, password)) {
               req.session.login = true;
               req.session.usuario = user;
-              console.log(req.session.usuario);
+              req.logger.info(req.session.usuario);
 
               return done(null, user);
             } else {
@@ -69,7 +69,8 @@ const initializePassport = () => {
           }
           return done(null, false); // User does not exist
         } catch (error) {
-          console.log("passport-config", error);
+          req.logger.info("passport-config", error);
+          req.logger.error(error);
           done(error);
         }
       }
@@ -85,9 +86,9 @@ const initializePassport = () => {
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log(accessToken, refreshToken);
+        req.logger.info(accessToken, refreshToken);
         try {
-          console.log(profile);
+          req.logger.info(profile);
           const user = await User.findOne({ email: profile.email });
           if (!user) {
             const newUser = {
@@ -103,6 +104,7 @@ const initializePassport = () => {
           }
           done(null, user);
         } catch (error) {
+          req.logger.error(error);
           return done(error);
         }
       }

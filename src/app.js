@@ -16,6 +16,7 @@ const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const initializePassport = require("./config/passport.config");
 const handleError = require("./middleware/error.js");
+const addLogger = require("./utils/logger.js");
 require("./database");
 
 const hbs = exphbs.create({
@@ -52,6 +53,7 @@ app.use(
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(addLogger)
 
 app.use(cookieParser("secret"));
 app.engine("hbs", exphbs.engine());

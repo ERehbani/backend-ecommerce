@@ -64,7 +64,7 @@ class ViewsController {
     try {
       const { id } = req.params;
       const producto = await productService.getProductById(id);
-      console.log({
+      req.logger.info({
         producto,
         productId: producto._id.toString(),
       });
@@ -79,6 +79,7 @@ class ViewsController {
         mensaje: "Error al acceder a la vista de details de productos",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
     }
   }
 

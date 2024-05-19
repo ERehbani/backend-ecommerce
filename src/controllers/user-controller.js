@@ -7,7 +7,10 @@ const UserModel = require("../dao/models/user.model");
 const CartService = require("../services/cart-service");
 const CustomError = require("../services/errors/custom-error");
 const cartService = new CartService();
-const { generateErrorUser, generateErrorLoginGithub } = require("../services/errors/info");
+const {
+  generateErrorUser,
+  generateErrorLoginGithub,
+} = require("../services/errors/info");
 const { EErrors } = require("../services/errors/enums");
 
 class UserController {
@@ -30,13 +33,13 @@ class UserController {
         });
       }
       const userExist = await userService.getUserByEmail(email);
-      console.log(userExist);
+      req.logger.info(userExist);
       if (userExist) return res.status(400).send("El usuario ya existe");
 
       const createCart = await cartService.crearCart();
-      console.log(createCart);
+      req.logger.info(createCart);
       const newCart = await createCart.save();
-      console.log("NEW CART", newCart);
+      req.logger.info("NEW CART", newCart);
 
       const newUser = new UserModel({
         first_name,
@@ -51,7 +54,7 @@ class UserController {
       await newUser.save();
       res.redirect("/login");
     } catch (error) {
-      console.log(error);
+      req.logger.error(error);
       res.status(500).send("Error al crear un usuario en el controlador");
     }
   }
@@ -75,14 +78,14 @@ class UserController {
 
   async loginUser(req, res) {
     const { email, password } = req.body;
-    console.log(email);
+    req.logger.info(email);
     try {
       const usuario = await userService.getUserByEmail(email);
       if (usuario) {
         if (isValidPassword(usuario, password)) {
           req.session.login = true;
           req.session.usuario = usuario;
-          console.log({ usuarioInController: req.session.usuario });
+          req.logger.info({ usuarioInController: req.session.usuario });
           res.redirect("/profile");
         } else {
           res.status(400).send({ error: "Contraseña incorrecta ❌" });
@@ -91,7 +94,7 @@ class UserController {
         res.status(400).send({ error: "El usuario no existe ❌" });
       }
     } catch (error) {
-      console.error("Error in login:", error);
+      req.logger.error("Error in login:", error);
       res.status(400).send({ error: "Error en el login ❌" });
     }
   }
@@ -103,7 +106,10 @@ class UserController {
       if (err) {
         CustomError.crearError({
           nombre: "Github Login",
-          causa: generateErrorLoginGithub(req.session.usuario, req.session.login),
+          causa: generateErrorLoginGithub(
+            req.session.usuario,
+            req.session.login
+          ),
           mensaje: "Error al iniciar sesion con Github",
           codigo: EErrors.TIPO_INVALIDO,
         });
@@ -114,7 +120,6 @@ class UserController {
   }
 
   async logOut(req, res) {
-
     if (req.session.login) {
       req.session.destroy();
     }

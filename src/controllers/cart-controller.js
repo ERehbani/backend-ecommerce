@@ -35,6 +35,7 @@ class CartController {
         mensaje: "Error al crear un carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({ error: "Error del servidor" });
     }
   }
@@ -52,6 +53,7 @@ class CartController {
         mensaje: "Error al intentar traer carrito por id",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
@@ -70,6 +72,7 @@ class CartController {
         mensaje: "Error al actualizar el carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({
         status: "error",
         error: "Error interno del servidor",
@@ -95,6 +98,7 @@ class CartController {
         mensaje: "Error al agregar producto al carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
@@ -116,6 +120,7 @@ class CartController {
         mensaje: "Error al eliminar producto del carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({
         status: "error",
         error: "Error interno del servidor",
@@ -140,6 +145,7 @@ class CartController {
         mensaje: "Error al modificar la cantidad del producto en el carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({ status: "error", message: error.message });
     }
   }
@@ -162,6 +168,7 @@ class CartController {
         mensaje: "Error al eliminar carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      req.logger.error(error)
       res.status(500).json({
         status: "error",
         error: "Error interno del servidor",
@@ -203,7 +210,7 @@ class CartController {
         amount: calcularTotal(cart.products),
         purchaser: userWithCart._id,
       });
-
+      req.logger.info(ticket)
       await ticket.save();
 
       cart.products = cart.products.filter((item) =>

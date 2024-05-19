@@ -7,7 +7,7 @@ class UserService {
       const usuario = await UserModel.findOne({ email: email });
       return usuario;
     } catch (error) {
-      console.log(error);
+      req.logger.error(error);
     }
   }
 
@@ -19,7 +19,7 @@ class UserService {
       }
       return user;
     } catch (error) {
-      console.log(error);
+      req.logger.error(error);
       throw error;
     }
   }

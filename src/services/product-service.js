@@ -13,13 +13,13 @@ class ProductService {
   }) {
     try {
       if (!title || !description || !price || !code || !stock || !category) {
-        console.log("Todos los campos son obligatorios");
+        req.logger.error("Todos los campos son obligatorios");
         return;
       }
 
       const existProduct = await ProductModel.findOne({ code: code });
       if (existProduct) {
-        console.log("El codigo debe ser unico");
+        req.logger.warning("El codigo debe ser unico");
         return;
       }
 
@@ -33,16 +33,15 @@ class ProductService {
         category,
         thumbnails: thumbnails || [],
       });
-      console.log(newProduct)
+      req.logger.info(newProduct);
       await newProduct.save();
     } catch (error) {
-      console.log("Error al agregar producto");
+      req.logger.error("Error al agregar producto");
       throw error;
     }
   }
 
   async getProducts(page, sort = "asc", limit, query) {
-
     try {
       const skip = (page - 1) * limit;
       let queryOptions = {};
@@ -59,7 +58,7 @@ class ProductService {
       const totalPages = Math.ceil(totalProducts / limit);
       const hasPrevPage = page > 1;
       const hasNextPage = page < totalPages;
-      
+
       return {
         status: "success",
         docs: products,
@@ -73,11 +72,13 @@ class ProductService {
           ? `/api/products?limit=${limit}&page=${page - 1}&sort=${sort}`
           : null,
         nextLink: hasNextPage
-          ? `/api/products?limit=${limit}&page=${parseInt(page) + 1}&sort=${sort}`
+          ? `/api/products?limit=${limit}&page=${
+              parseInt(page) + 1
+            }&sort=${sort}`
           : null,
       };
     } catch (error) {
-      console.log("Error al obtener los productos", error);
+      req.logger.error("Error al obtener los productos", error);
     }
   }
 
@@ -86,12 +87,12 @@ class ProductService {
       const producto = await ProductModel.findById(id);
 
       if (!producto) {
-        console.log("Producto no encontrado");
+        req.logger.error("Producto no encontrado");
         return null;
       }
       return producto;
     } catch (error) {
-      console.log(error, "Error al traer por id");
+      req.logger.error(error, "Error al traer por id");
     }
   }
 
@@ -103,13 +104,13 @@ class ProductService {
       );
 
       if (!productActualizado) {
-        console.log("No se encuentra el producto amigwi");
+        req.logger.error("No se encuentra el producto amigwi");
         return null;
       }
 
       return productActualizado;
     } catch (error) {
-      console.log("El producto no se pudo actualizar rey", error);
+      req.logger.error("El producto no se pudo actualizar rey", error);
     }
   }
 
@@ -117,14 +118,14 @@ class ProductService {
     try {
       const deleteadito = await ProductModel.findByIdAndDelete(id);
       if (!deleteadito) {
-        console.log("A ver si buscamos mejor");
+        req.logger.error("A ver si buscamos mejor");
         return null;
       }
 
-      console.log("Borrado correctamente");
+      req.logger.info("Borrado correctamente");
       return deleteadito;
     } catch (error) {
-      console.log(error);
+      req.logger.error(error);
     }
   }
 }

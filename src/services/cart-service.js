@@ -8,7 +8,7 @@ class CartService {
       await newCart.save();
       return newCart;
     } catch (error) {
-      console.log("Error al crear el nuevo carrito");
+      req.logger.error("Error al crear el nuevo carrito");
       return null;
     }
   }
@@ -17,13 +17,13 @@ class CartService {
     try {
       const cart = await CartModel.findById(cartId).populate("products");
       if (!cart) {
-        console.log(`No existe el carrito con el id ${cartId}`);
+        req.logger.error(`No existe el carrito con el id ${cartId}`);
         return null;
       }
 
       return cart;
     } catch (error) {
-      console.log("Error al traer el carrito por id");
+      req.logger.error("Error al traer el carrito por id");
       throw error;
     }
   }
@@ -47,7 +47,7 @@ class CartService {
       await carrito.save();
       return carrito;
     } catch (error) {
-      console.log("Error al agregar un producto", error);
+      req.logger.error("Error al agregar un producto", error);
     }
   }
 
@@ -65,7 +65,7 @@ class CartService {
       await cart.save();
       return cart;
     } catch (error) {
-      console.log("Error al eliminar el producto del carrito");
+      req.logger.error("Error al eliminar el producto del carrito");
       throw error;
     }
   }
@@ -82,7 +82,7 @@ class CartService {
       cart.markModified("products");
       await cart.save();
     } catch (error) {
-      console.error("Error al actualizar el carrito en el gestor", error);
+      req.logger.error("Error al actualizar el carrito en el gestor", error);
       throw error;
     }
   }
@@ -102,6 +102,7 @@ class CartService {
         });
       }
     } catch (error) {
+      req.logger.error;
       res.status(500).json({ status: "error", message: error.message });
     }
   }
@@ -120,7 +121,7 @@ class CartService {
 
       return cart;
     } catch (error) {
-      console.log("Error al vaciar el carrito", error);
+      req.logger.error("Error al vaciar el carrito", error);
       throw error;
     }
   }
@@ -128,10 +129,10 @@ class CartService {
   async purchaseTicket(cartID) {
     try {
       const cart = await CartModel.findById(cartID);
-      console.log(cart);
+      req.logger.info(cart);
       return cart;
     } catch (error) {
-      console.error("Error al comprar el ticket en service", error);
+      req.logger.error("Error al comprar el ticket en service", error);
     }
   }
 }
