@@ -12,26 +12,29 @@ const {
   generateErrorLoginGithub,
 } = require("../services/errors/info");
 const { EErrors } = require("../services/errors/enums");
+const { generateResetToken } = require("../utils/tokenReset");
+const EmailManager = require("../utils/email");
+const emailManager = new EmailManager();
 
 class UserController {
   async createUser(req, res) {
     try {
       const { first_name, last_name, email, password, age } = req.body;
 
-      if (!first_name || !last_name || !email || !password || !age) {
-        CustomError.crearError({
-          nombre: "Usuario nuevo",
-          causa: generateErrorUser({
-            first_name,
-            last_name,
-            email,
-            password,
-            age,
-          }),
-          mensaje: "Error al intentar crear usuario",
-          codigo: EErrors.TIPO_INVALIDO,
-        });
-      }
+      // if (!first_name || !last_name || !email || !password || !age) {
+      //   CustomError.crearError({
+      //     nombre: "Usuario nuevo",
+      //     causa: generateErrorUser({
+      //       first_name,
+      //       last_name,
+      //       email,
+      //       password,
+      //       age,
+      //     }),
+      //     mensaje: "Error al intentar crear usuario",
+      //     codigo: EErrors.TIPO_INVALIDO,
+      //   });
+      // }
       const userExist = await userService.getUserByEmail(email);
       req.logger.info(userExist);
       if (userExist) return res.status(400).send("El usuario ya existe");
@@ -124,6 +127,81 @@ class UserController {
       req.session.destroy();
     }
     res.status(200).redirect("/login");
+  }
+
+  //////////////// NODE MAILER //////////////////////////////
+  async requresPasswordReset(req, res) {
+    const { email } = req.body;
+    req.logger.info(email);
+    try {
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        return res.status(404).send("Usuario no encontrado");
+      }
+
+      const token = generateResetToken();
+
+      user.resetToken = {
+        token: token,
+        expiresAt: new Date(Date.now() + 3600000),
+      };
+
+      req.logger.info(user.resetToken);
+
+      await user.save();
+
+      await emailManager.sendMailResetPassword(email, user.first_name, token);
+      res.redirect("/send-confirmation");
+    } catch (error) {
+      req.logger.error(error);
+      res.status(500).send("Error en el controlador al enviar un email");
+    }
+  }
+
+  async resetPassword(req, res) {
+    const { email, password, token } = req.body;
+
+    req.logger.info(email);
+    req.logger.info(password);
+    req.logger.info(token);
+    try {
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        return res.status(404).send("Usuario no encontrado");
+      }
+
+      if (user.resetToken.token !== token) {
+        return res.status(404).send("El token ingresado no es válido");
+      }
+
+      const resetToken = user.resetToken;
+      if (!resetToken || resetToken.token !== token) {
+        return res.status(404).send("El token ingresado no es válido");
+      }
+
+      const now = new Date();
+      if (now > resetToken.expiresAt) {
+        return res.redirect("/reset-password")
+      }
+
+      if (isValidPassword(user, password)) {
+        return res
+          .status(404)
+          .send("La nueva contraseña no puede ser igual a la anterior");
+      }
+
+      user.password = createHash(password);
+      user.resetToken = undefined;
+      await user.save();
+
+      return res.redirect("/login");
+    } catch (error) {
+      console.log(error);
+      req.logger.error(error);
+      return res
+        .status(500)
+        .send("Error al restablecer la contraseña en el controlador");
+    }
   }
 }
 

@@ -22,18 +22,24 @@ function viewsRouter() {
 
   router.get("/", (req, res) => res.render("home"));
 
-  router.get("/realtimeproducts", viewsController.realTimeProducts)
+  router.get("/realtimeproducts", viewsController.realTimeProducts);
 
-  router.get("/chat", viewsController.chat)
+  router.get("/reset-password", viewsController.resetPasswordRequest);
+
+  router.get("/change-password", viewsController.resetPassword);
+
+  router.get("/send-confirmation", viewsController.sendConfirmation);
+
+  router.get("/chat", viewsController.chat);
 
   router.get("/loggertest", (req, res) => {
     req.logger.error("Logger: Error");
     req.logger.warning("Logger: Warning");
     req.logger.info("Logger: Info");
-    req.logger.http("Logger: HTTP")
-  
+    req.logger.http("Logger: HTTP");
+
     res.send("Test de logs");
-  })
+  });
 
   return router;
 }

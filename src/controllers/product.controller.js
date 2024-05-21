@@ -13,8 +13,8 @@ const { EErrors } = require("../services/errors/enums");
 class ProductController {
   async getProducts(req, res) {
     try {
-      let { limit = 10, page = 1, sort, query } = req.query;
-     req.logger.info(limit);
+      const { limit = 10, page = 1, sort, query } = req.query;
+      req.logger.info(limit);
       const response = await productService.getProducts(
         page,
         sort,
@@ -41,9 +41,8 @@ class ProductController {
         return res.json({
           error: "Producto no encontrado",
         });
-      } else {
-        return res.json(response);
       }
+      return res.json(response);
     } catch (error) {
       CustomError.crearError({
         nombre: "Traer producto por id",
@@ -57,10 +56,10 @@ class ProductController {
 
   async createProduct(req, res) {
     const newProduct = req.body;
+    console.log("NEW PRODUCT IN CONTROLLER", newProduct);
     try {
       const product = await productService.addProduct(newProduct);
-
-      res.status(201).json({
+      return res.status(201).json({
         message: "Producto agregado exitosamente",
         payload: product,
       });
@@ -75,7 +74,7 @@ class ProductController {
   }
 
   async updateProduct(req, res) {
-    let id = req.params.pid;
+    const id = req.params.pid;
     const product = await req.body;
     try {
       await productService.updateProduct(id, product);

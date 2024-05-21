@@ -39,9 +39,12 @@ const productSchema = new mongoose.Schema({
   thumbnails: {
     type: [String],
   },
+  owner: {
+    type: String,
+  },
 });
 
-productSchema.plugin(mongoosePaginate)
+productSchema.plugin(mongoosePaginate);
 const ProductModel = mongoose.model("products", productSchema);
 
 module.exports = ProductModel;

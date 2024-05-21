@@ -10,16 +10,18 @@ class ProductService {
     stock,
     category,
     thumbnails,
+    owner
   }) {
+
     try {
-      if (!title || !description || !price || !code || !stock || !category) {
-        req.logger.error("Todos los campos son obligatorios");
+      if (!title || !description || !price || !code || !stock || !category || !owner) {
+        console.log("Todos los campos son obligatorios");
         return;
       }
 
       const existProduct = await ProductModel.findOne({ code: code });
       if (existProduct) {
-        req.logger.warning("El codigo debe ser unico");
+        console.log("El codigo debe ser unico");
         return;
       }
 
@@ -32,11 +34,11 @@ class ProductService {
         status: true,
         category,
         thumbnails: thumbnails || [],
+        owner: owner
       });
-      req.logger.info(newProduct);
       await newProduct.save();
     } catch (error) {
-      req.logger.error("Error al agregar producto");
+      console.log("Error al agregar producto");
       throw error;
     }
   }
@@ -78,7 +80,7 @@ class ProductService {
           : null,
       };
     } catch (error) {
-      req.logger.error("Error al obtener los productos", error);
+     console.log("Error al obtener los productos", error);
     }
   }
 

@@ -11,7 +11,7 @@ class SocketManager {
   async initSocketEvents() {
     this.io.on("connection", async (socket) => {
       socket.emit("products", await productService.getProducts());
-      req.logger.info(await productService.getProducts());
+      console.log(await productService.getProducts());
       socket.on("deleteProducts", async (id) => {
         await productService.deleteProduct(id);
         this.emitUpdatedProducts(socket);
@@ -32,7 +32,7 @@ class SocketManager {
 
   async emitUpdatedProducts() {
     const products = await productService.getProducts();
-    req.logger.info(products);
+    console.log(products);
     this.io.emit("products", products);
   }
 }

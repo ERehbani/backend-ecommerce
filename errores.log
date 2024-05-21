@@ -20,3 +20,35 @@ error: Logger: Error
 warning: Logger: Warning
 error: Logger: Error
 warning: Logger: Warning
+error: undefined {"causa":" Los datos estan incompletos o no son válidos. \n    Necesitamos recibir los siguientes datos: \n    - first_name: String, recibimos d.o.o.o\n    - last_name: String, recibimos undefined\n    - email: String, recibimos undefined\n    - password: String, recibimos 44444444\n    - age: Number, recibimos undefined\n    ","code":2,"name":"Usuario nuevo"}
+error: undefined {"_message":"user validation failed","errors":{"age":{"kind":"required","message":"Path `age` is required.","name":"ValidatorError","path":"age","properties":{"message":"Path `age` is required.","path":"age","type":"required"}}}}
+error: undefined {"_message":"user validation failed","errors":{"age":{"kind":"required","message":"Path `age` is required.","name":"ValidatorError","path":"age","properties":{"message":"Path `age` is required.","path":"age","type":"required"}}}}
+error: undefined {"_message":"user validation failed","errors":{"age":{"kind":"required","message":"Path `age` is required.","name":"ValidatorError","path":"age","properties":{"message":"Path `age` is required.","path":"age","type":"required"}}}}
+error: undefined {"_message":"user validation failed","errors":{"age":{"kind":"required","message":"Path `age` is required.","name":"ValidatorError","path":"age","properties":{"message":"Path `age` is required.","path":"age","type":"required"}}}}
+error: undefined
+error: undefined
+error: undefined
+error: undefined
+error: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+error: undefined {"code":"ERR_HTTP_HEADERS_SENT"}
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: Error en el middleware
+error: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+error: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}

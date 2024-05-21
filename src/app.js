@@ -1,5 +1,5 @@
 const express = require("express");
-const http = require("http");
+const http = require("node:http");
 const productsRouter = require("./routes/products.router");
 const SocketManager = require("./sockets/socketManager");
 const cartRouter = require("./routes/cart.router");
@@ -17,6 +17,8 @@ const cookieParser = require("cookie-parser");
 const initializePassport = require("./config/passport.config");
 const handleError = require("./middleware/error.js");
 const addLogger = require("./utils/logger.js");
+const path = require('node:path');
+
 require("./database");
 
 const hbs = exphbs.create({
@@ -57,12 +59,12 @@ app.use(addLogger)
 
 app.use(cookieParser("secret"));
 app.engine("hbs", exphbs.engine());
-app.set("view engine", "hbs");
-app.set("views", "./src/views");
 app.use("/", viewsRouter(io));
 app.use("/realtimeproducts", viewsRouter(io));
 app.use("/products", viewsRouter(io));
 app.use("/carts", viewsRouter(io));
+app.set("view engine", "hbs");
+app.set("views", "./src/views");
 
 app.use("/api", productsRouter);
 app.use("/api", cartRouter);
@@ -70,6 +72,7 @@ app.use("/api", userRouter);
 app.use("/api", sessionRouter);
 
 app.use(handleError)
+
 httpServer.listen(8080, () => {
   console.log("8080 🌎");
 });

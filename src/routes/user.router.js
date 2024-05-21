@@ -57,4 +57,8 @@ router.get("/failedregister", userController.failedRegister);
 
 router.get("/profile", userController.currentUser);
 
+router.post("/reset-password-request", userController.requresPasswordReset);
+
+router.post("/reset-password", userController.resetPassword);
+
 module.exports = router;

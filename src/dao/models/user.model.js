@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
   first_name: {
     type: String,
-    required: true,
+    // required: true,
   },
   last_name: {
     type: String,
-    required: true,
+    // required: true,
   },
   email: {
     type: String,
@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
   },
   age: {
     type: Number,
-    required: true,
+    // required: true,
   },
   cart: {
     type: mongoose.Schema.Types.ObjectId,
@@ -30,8 +30,13 @@ const userSchema = mongoose.Schema({
   },
   role: {
     type: String,
-    required: true,
+    // required: true,
   },
+
+  resetToken: {
+    token: String,
+    expiresAt: Date
+  }
 });
 
 const UserModel = mongoose.model("user", userSchema);

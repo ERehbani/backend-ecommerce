@@ -79,7 +79,7 @@ class ViewsController {
         mensaje: "Error al acceder a la vista de details de productos",
         codigo: EErrors.TIPO_INVALIDO,
       });
-      req.logger.error(error)
+      req.logger.error(error);
     }
   }
 
@@ -122,6 +122,18 @@ class ViewsController {
     res.render("register");
   }
 
+  async resetPasswordRequest(req, res) {
+    res.render("reset-password");
+  }
+
+  async resetPassword(req, res) {
+    res.render("change-password");
+  }
+
+  async sendConfirmation(req, res) {
+    res.render("send-confirmation");
+  }
+
   async viewPerfil(req, res) {
     if (!req.session.login) {
       res.redirect("/login");
@@ -132,9 +144,15 @@ class ViewsController {
   }
 
   async realTimeProducts(req, res) {
+    console.log("REQ SESSION USUARIo",req.session.usuario)
     try {
-      if (req.session.usuario.role === "Admin") {
-        res.render("realTimeProducts");
+      if (!req.session.usuario) {
+        res.redirect("/login");
+      } else if (
+        req.session.usuario.role === "Admin" ||
+        req.session.usuario.role === "Premium"
+      ) {
+        res.render("realTimeProducts", { user: req.session.usuario });
       } else {
         res.redirect("/profile");
       }
