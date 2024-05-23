@@ -1,32 +1,47 @@
 <main>
-  <h2>Registro</h2>
-  <p>Ya estas registrado? <a href="/login">Inicia sesión</a></p>
+
   <div class="register-container">
+    <div class="title-login-container">
+      <h1 class="login-title">Coderhouse e-commerce</h1>
+    </div>
+    <form action="/api/sessions" method="post" class="form-login">
+      <h2>Registro</h2>
+      <div>
+        <label for="first_name">First Name</label>
+        <input type="text" name="first_name" id="first_name" />
+      </div>
 
-    <form action="/api/sessions" method="post" class="register">
-      <label for="first_name">First Name</label>
-      <input type="text" name="first_name" id="first_name" />
+      <div>
+        <label for="last_name">Last Name</label>
+        <input type="text" name="last_name" id="last_name" />
 
-      <label for="last_name">Last Name</label>
-      <input type="text" name="last_name" id="last_name" />
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" />
 
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" />
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" />
 
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" />
+      </div>
+      <div>
+        <label for="age">Age</label>
+        <input type="number" name="age" id="age" />
 
-      <label for="age">Age</label>
-      <input type="number" name="age" id="age" />
-
-      {{!-- <label for="role">Role</label>
+      </div>
+      {{! <label for="role">Role</label>
       <select name="role" id="role">
         <option value="user">Usuario</option>
         <option value="admin">Admin</option>
-      </select> --}}
-      <button type="submit">Register</button>
+      </select> }}
+      <button type="submit" class="button-login">Register</button>
     </form>
+    <div style="text-align: center;">
+      <p>Ya estas registrado?</p>
+      <a href="/login">Inicia sesión</a>
+    </div>
   </div>
-
 
 </main>

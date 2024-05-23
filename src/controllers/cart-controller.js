@@ -90,7 +90,7 @@ class CartController {
         productId,
         quantity
       );
-      res.json(updateCart.products);
+      res.redirect(`/cart/${req.session.usuario.cart}`);
     } catch (error) {
       CustomError.crearError({
         nombre: "Agregar producto al carrito",

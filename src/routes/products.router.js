@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const ProductController = require("../controllers/product.controller");
+const ProductController = require("../controllers/product-controller");
 const generateProducts = require("../utils/generateProducts");
 const productController = new ProductController()
 

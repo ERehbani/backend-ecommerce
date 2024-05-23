@@ -10,7 +10,7 @@ class ProductService {
     stock,
     category,
     thumbnails,
-    owner
+    owner = "admin"
   }) {
 
     try {
@@ -120,14 +120,11 @@ class ProductService {
     try {
       const deleteadito = await ProductModel.findByIdAndDelete(id);
       if (!deleteadito) {
-        req.logger.error("A ver si buscamos mejor");
         return null;
       }
 
-      req.logger.info("Borrado correctamente");
       return deleteadito;
     } catch (error) {
-      req.logger.error(error);
     }
   }
 }

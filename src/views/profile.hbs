@@ -1,10 +1,17 @@
-<a href="/products">{«}</a>
+<div class="profile-screen">
+  <div>
+    <a href="/products" class="button-login">{«}</a>
 
-<h1>Perfil</h1>
+  </div>
+  <h1>Perfil</h1>
 
-<p>Bienvenido/a {{user.nombre}} {{user.apellido}}</p>
-<p>rol: {{user.role}}</p>
+  <h2 class="name-profile">{{user.nombre}} {{user.apellido}}</h2>
+  <div style="display: flex; gap: 5px;">
+    <p>rol:</p>
+    <p>{{user.role}}</p>
+  </div>
 
-{{#if isAdmin}}
-  <a href="/realtimeproducts">Modificar productos</a>
-{{/if}}
+  {{#if isAdmin}}
+    <a href="/realtimeproducts" class="button-login">Modificar productos</a>
+  {{/if}}
+</div>

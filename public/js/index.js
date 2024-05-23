@@ -11,14 +11,17 @@ const renderProductos = (productos) => {
   const contenedorProductos = document.getElementById("contenedorProductos");
   contenedorProductos.innerHTML = "";
 
+  // biome-ignore lint/complexity/noForEach: <explanation>
   productos.docs.forEach((item) => {
     const card = document.createElement("div");
     card.classList.add("card");
 
     card.innerHTML = ` 
-                        <p> ${item.title} </p>
-                        <p> ${item.price} </p>
-                        <button> Eliminar </button>
+    <div class="product">
+    <p class="product-title"> ${item.title} </p>
+    <p> $${item.price} </p>
+    <button class="button-login"> Eliminar </button>
+    </div>
                         `;
 
     contenedorProductos.appendChild(card);

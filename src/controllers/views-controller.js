@@ -20,7 +20,8 @@ class ViewsController {
         req.user.last_name,
         req.user.role,
         req.user.age,
-        req.user.email
+        req.user.email,
+        req.user.cart
       );
 
       const findUser = await User.findById(req.session.passport.user);
@@ -40,13 +41,26 @@ class ViewsController {
         const { _id, ...rest } = producto.toObject();
         return { _id, ...rest };
       });
+
       req.session.usuario = userDto;
+      const userWithCart = {
+        ...userDto,
+        cart: req.session.usuario.cart, 
+      };
+
+      console.log("123456789", {
+        products: nuevoArray,
+        user: userWithCart,
+        isLoggedIn: req.session.login,
+      });
+
       res.render("products", {
-        nuevoArray,
-        req: req.session.login,
-        user: userDto,
+        products: nuevoArray,
+        user: userWithCart,
+        isLoggedIn: req.session.login,
       });
     } catch (error) {
+      console.log(error);
       CustomError.crearError({
         nombre: "View products",
         causa: generateErrorView("products"),
@@ -144,7 +158,7 @@ class ViewsController {
   }
 
   async realTimeProducts(req, res) {
-    console.log("REQ SESSION USUARIo",req.session.usuario)
+    console.log("REQ SESSION USUARIo", req.session.usuario);
     try {
       if (!req.session.usuario) {
         res.redirect("/login");
@@ -152,7 +166,16 @@ class ViewsController {
         req.session.usuario.role === "Admin" ||
         req.session.usuario.role === "Premium"
       ) {
-        res.render("realTimeProducts", { user: req.session.usuario });
+        const isPremium = req.session.usuario.role === "Premium";
+        const isAdmin = req.session.usuario.role === "Admin";
+        console.log("IS PREMIUM", isPremium);
+
+        res.render(
+          "realTimeProducts",
+          { user: req.session.usuario },
+          isPremium,
+          isAdmin
+        );
       } else {
         res.redirect("/profile");
       }

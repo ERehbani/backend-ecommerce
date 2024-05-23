@@ -2,22 +2,56 @@
 
 {{#if user}}
   <h2>Bienvenido/a {{user.nombre}} {{user.apellido}}!!!</h2>
-<a href="/profile">Perfil</a>
-  <b>ya va a llegar el dia en el que voy a estilizar esto y vas a quedar re loco
-    fede vas a ver sólo dame 3 meses más</b>
+  <a href="/profile"  class="logout-button"><svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="icon icon-tabler icons-tabler-outline icon-tabler-user-circle"
+    ><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+        d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
+      /><path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path
+        d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855"
+      /></svg>Perfil</a>
 {{/if}}
 {{#if req}}
-  <a href="/api/logout">Logout</a>
+  <a href="/api/logout" class="logout-button"><svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="icon icon-tabler icons-tabler-outline icon-tabler-logout-2"
+    ><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+        d="M10 8v-2a2 2 0 0 1 2 -2h7a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-2"
+      /><path d="M15 12h-12l3 -3" /><path d="M6 15l-3 -3" /></svg>Logout</a>
 {{/if}}
-{{#each nuevoArray}}
-  <div>
-    <a href="/product/{{this._id}}" target="_blank">{{this.title}}</a>
-    <p>{{description}}</p>
-    <p>Price: ${{price}}</p>
-    <p>Category: {{category}} </p>
-    <button> Agregar al Carrito </button>
-  </div>
-{{/each}}
+<div class="product-container">
+  {{#each products}}
+    <div class="product">
+      <a
+        href="/product/{{this._id}}"
+        target="_blank"
+        class="product-title"
+      >{{this.title}}</a>
+      <p style="text-transform: capitalize;">{{description}}</p>
+      <p>Price: ${{price}}</p>
+      <p style="text-transform: capitalize;">Category: {{category}} </p>
+       <form action="/api/carts/{{../user.cart}}/product/{{_id}}" method="POST">
+        <button class="button-login" type="submit">Agregar al Carrito</button>
+      </form>
+    </div>
+  {{/each}}
+</div>
 
 <p>Pagina {{currentPage}} de {{totalPages}} </p>
 {{#if hasNextPage}}
@@ -26,5 +60,3 @@
 {{#if hasPrevPage}}
   <a href="/products?page={{prevPage}}"> Anterior </a>
 {{/if}}
-
-

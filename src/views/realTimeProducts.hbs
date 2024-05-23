@@ -3,22 +3,30 @@
 
 <h2>Formulario para agregar productos</h2>
 
-<form action="/api/products" method="post">
-  <input type="text" id="title" placeholder="Titulo" name="title"/>
-  <input type="text" id="description" placeholder="Descripcion" name="description"/>
+<form action="/api/products" method="post" class="form-login">
+  <input type="text" id="title" placeholder="Titulo" name="title" />
+  <input
+    type="text"
+    id="description"
+    placeholder="Descripcion"
+    name="description"
+  />
   <input type="number" id="price" placeholder="Precio" name="price" />
-  <input type="text" id="img" value="Sin Imagen" name="img"/>
-  <input type="text" id="code" placeholder="Código" name="code"/>
-  <input type="number" id="stock" placeholder="Stock" name="stock"/>
-  <input type="text" id="category" placeholder="Categoria" name="category"/>
-  <input type="text" id="owner" name="owner" value={{user.email}} readonly>
+  <input type="text" id="img" value="Sin Imagen" name="img" />
+  <input type="text" id="code" placeholder="Código" name="code" />
+  <input type="number" id="stock" placeholder="Stock" name="stock" />
+  <input type="text" id="category" placeholder="Categoria" name="category" />
+  {{#if isPremium}}
+
+    <input type="text" id="owner" name="owner" value={{user.email}} readonly />
+  {{/if}}
   <select id="status">
     <option value="true"> Activo </option>
     <option value="false"> Inactivo </option>
   </select>
-  <button type="submit" id="btnEnviar"> Enviar </button>
+  <button type="submit" id="btnEnviar" class="button-login"> Enviar </button>
 </form>
-<div id="contenedorProductos"></div>
+<div id="contenedorProductos" class="product-container"></div>
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 
 <script src="/public/js/index.js"></script>
