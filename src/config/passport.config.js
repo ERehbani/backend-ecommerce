@@ -54,19 +54,27 @@ const initializePassport = () => {
               req.logger.info(req.session.usuario);
 
               return done(null, user);
-            } else {
-              CustomError.crearError({
-                nombre: "Login",
-                causa: generateErrorInfo({
-                  email,
-                  password,
-                }),
-                mensaje: "Error al iniciar sesión",
-                codigo: EErrors.TIPO_INVALIDO,
-              });
             }
+            CustomError.crearError({
+              nombre: "Login",
+              causa: generateErrorInfo({
+                email,
+                password,
+              }),
+              mensaje: "Error al iniciar sesión",
+              codigo: EErrors.TIPO_INVALIDO,
+            });
             return done(null, false);
           }
+          CustomError.crearError({
+            nombre: "Usuario",
+            causa: generateErrorInfo({
+              email,
+              password,
+            }),
+            mensaje: "Usuario no encontrado",
+            codigo: EErrors.TIPO_INVALIDO,
+          });
           return done(null, false); // User does not exist
         } catch (error) {
           req.logger.info("passport-config", error);

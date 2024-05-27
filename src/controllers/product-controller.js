@@ -21,14 +21,16 @@ class ProductController {
         limit,
         query
       );
+      if (!response) {
+        CustomError.crearError({
+          nombre: "Usuario nuevo",
+          causa: generateErrorGetProduct(req.query),
+          mensaje: "Error al intentar traer producto/s",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       res.json(response);
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Usuario nuevo",
-        causa: generateErrorGetProduct(req.query),
-        mensaje: "Error al intentar traer producto/s",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -38,18 +40,15 @@ class ProductController {
     try {
       const response = await productService.getProductById(id);
       if (!response) {
-        return res.json({
-          error: "Producto no encontrado",
+        CustomError.crearError({
+          nombre: "Traer producto por id",
+          causa: generateErrorGetId(id),
+          mensaje: "Error al intentar traer producto por id",
+          codigo: EErrors.TIPO_INVALIDO,
         });
       }
       return res.json(response);
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Traer producto por id",
-        causa: generateErrorGetId(id),
-        mensaje: "Error al intentar traer producto por id",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       return res.status(500).json({ error: "Error del servidor" });
     }
   }
@@ -59,16 +58,17 @@ class ProductController {
     console.log("NEW PRODUCT IN CONTROLLER", newProduct);
     try {
       const product = await productService.addProduct(newProduct);
-      return res.redirect('back');
-
+      if (!product) {
+        CustomError.crearError({
+          nombre: "Crear producto",
+          causa: generateErrorAddProduct(newProduct),
+          mensaje: "Error al crear un producto",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
+      return res.redirect("back");
     } catch (error) {
-      console.log(error)
-      CustomError.crearError({
-        nombre: "Crear producto",
-        causa: generateErrorAddProduct(newProduct),
-        mensaje: "Error al crear un producto",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
+      console.log(error);
     }
   }
 
@@ -76,17 +76,20 @@ class ProductController {
     const id = req.params.pid;
     const product = await req.body;
     try {
-      await productService.updateProduct(id, product);
+      const updatedCart = await productService.updateProduct(id, product);
+      if (!updatedCart) {
+        CustomError.crearError({
+          nombre: "Actualizar producto",
+          causa: generateErrorUpdate(id, product),
+          mensaje: "Error al actualizar el producto",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       res.json({
         message: "Producto actualizado exitosamente",
       });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Actualizar producto",
-        causa: generateErrorUpdate(id, product),
-        mensaje: "Error al actualizar el producto",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
+      req.logger.error(error);
     }
   }
 
@@ -96,23 +99,20 @@ class ProductController {
       const deletedProduct = await productService.deleteProduct(id);
 
       if (!deletedProduct) {
-        return res
-          .status(404)
-          .send({ message: "El producto que desea borrar, no existe" });
+        CustomError.crearError({
+          nombre: "Eliminar producto",
+          causa: generateErrorDelete(id),
+          mensaje: "El producto que desea borrar, no existe",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
       }
-
       res.status(200).send({
         message: "Producto eliminado correctamente",
         deletedProduct: deletedProduct,
       });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Eliminar producto",
-        causa: generateErrorDelete(id),
-        mensaje: "Error al eliminar el producto",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
-      res.status(500).send({ error: "Error interno del servidor" });
+      req.logger.error(error);
+      return res.status(500).send({ error: "Error interno del servidor" });
     }
   }
 }

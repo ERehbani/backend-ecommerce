@@ -27,14 +27,14 @@ class CartController {
         res.json({ message: "Carrito creado con éxito", cart: newCart });
         return savedCart;
       }
-      res.status(404).json({ error: "No se pudo crear el carrito" });
-    } catch (error) {
       CustomError.crearError({
         nombre: "Crear un carrito",
         causa: generateErrorNew(),
         mensaje: "Error al crear un carrito",
         codigo: EErrors.TIPO_INVALIDO,
       });
+      res.status(404).json({ error: "No se pudo crear el carrito" });
+    } catch (error) {
       req.logger.error(error);
       res.status(500).json({ error: "Error del servidor" });
     }
@@ -42,27 +42,29 @@ class CartController {
 
   async getCartById(req, res) {
     const cartId = req.params.cid;
-    const user = req.session.usuario
+    const user = req.session.usuario;
 
     try {
       const cart = await cartSevice.getCartById(cartId);
-      console.log("products",cart.products)
-      const plainProducts = cart.products.map(item => ({
+
+      if (!cart) {
+        CustomError.crearError({
+          nombre: "Traer carrito por id",
+          causa: generateErrorGetId(id),
+          mensaje: "Error al intentar traer carrito por id",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
+      const plainProducts = cart.products.map((item) => ({
         productTitle: item.product.title,
         productId: item.product.id,
         productPrice: item.product.price,
         quantity: item.quantity,
-        allProduct: item.id
+        allProduct: item.id,
       }));
-      console.log("carrito", { products: plainProducts, user });
+
       res.render("cart", { products: plainProducts, user });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Traer carrito por id",
-        causa: generateErrorGetId(id),
-        mensaje: "Error al intentar traer carrito por id",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       req.logger.error(error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
@@ -74,14 +76,16 @@ class CartController {
 
     try {
       const updatedCart = await cartSevice.updateCart(cartId, updatedProducts);
+      if (!updatedCart) {
+        CustomError.crearError({
+          nombre: "Actualizar carrito",
+          causa: generateErrorUpdate(cartId, updatedProducts),
+          mensaje: "Error al actualizar el carrito",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       res.json(updatedCart);
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Actualizar carrito",
-        causa: generateErrorUpdate(cartId, updatedProducts),
-        mensaje: "Error al actualizar el carrito",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       req.logger.error(error);
       res.status(500).json({
         status: "error",
@@ -100,14 +104,15 @@ class CartController {
         productId,
         quantity
       );
-      // res.redirect(`/cart/${req.session.usuario.cart}`);
+      if (!updateCart) {
+        CustomError.crearError({
+          nombre: "Agregar producto al carrito",
+          causa: generateErrorProductToCart(cartId, productId, quantity),
+          mensaje: "Error al agregar producto al carrito",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Agregar producto al carrito",
-        causa: generateErrorProductToCart(cartId, productId, quantity),
-        mensaje: "Error al agregar producto al carrito",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       req.logger.error(error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
@@ -117,19 +122,20 @@ class CartController {
     const { cid, pid } = req.params;
     try {
       const cart = await cartSevice.deleteProductFromCart(cid, pid);
-
+      if (!cart) {
+        CustomError.crearError({
+          nombre: "Eliminar producto del carrito",
+          causa: generateErrorDeleteProductFromCart(cid, pid),
+          mensaje: "Error al eliminar producto del carrito",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       res.json({
         status: "success",
         message: "Producto eliminado correctamente del carrito",
         cart,
       });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Eliminar producto del carrito",
-        causa: generateErrorDeleteProductFromCart(cid, pid),
-        mensaje: "Error al eliminar producto del carrito",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       req.logger.error(error);
       res.status(500).json({
         status: "error",
@@ -143,18 +149,20 @@ class CartController {
     const { quantity } = req.body;
     try {
       const cart = await cartSevice.updateQuantity(cid, pid, quantity);
+      if (!cart) {
+        CustomError.crearError({
+          nombre: "Actualizar cantidad",
+          causa: generateErrorUpdateQuantity(cid, pid, quantity),
+          mensaje: "Error al modificar la cantidad del producto en el carrito",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       res.json({
         status: "success",
         message: "Cantidad de producto actualizada correctamente",
         cart,
       });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Actualizar cantidad",
-        causa: generateErrorUpdateQuantity(cid, pid, quantity),
-        mensaje: "Error al modificar la cantidad del producto en el carrito",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       req.logger.error(error);
       res.status(500).json({ status: "error", message: error.message });
     }
@@ -163,21 +171,22 @@ class CartController {
   async deleteCart(req, res) {
     const cartId = req.params.cid;
     try {
-      const updatedCart = await cartSevice.cleanCart(cartId);
-
+      const deletedCart = await cartSevice.cleanCart(cartId);
+      if (!deletedCart) {
+        CustomError.crearError({
+          nombre: "Eliminar carrito",
+          causa: generateErrorDelete(cartId),
+          mensaje: "Error al eliminar carrito",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       res.json({
         status: "success",
         message:
           "Todos los productos del carrito fueron eliminados correctamente",
-        updatedCart,
+        deletedCart,
       });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Eliminar carrito",
-        causa: generateErrorDelete(cartId),
-        mensaje: "Error al eliminar carrito",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       req.logger.error(error);
       res.status(500).json({
         status: "error",
@@ -220,6 +229,15 @@ class CartController {
         amount: calcularTotal(cart.products),
         purchaser: userWithCart._id,
       });
+
+      if (!ticket) {
+        CustomError.crearError({
+          nombre: "Realizar compra",
+          causa: generateErrorPurchaseTicket(cart, cid, products),
+          mensaje: "Error al realizar una compra",
+          codigo: EErrors.TIPO_INVALIDO,
+        });
+      }
       req.logger.info(ticket);
       await ticket.save();
 
@@ -239,12 +257,6 @@ class CartController {
         },
       });
     } catch (error) {
-      CustomError.crearError({
-        nombre: "Realizar compra",
-        causa: generateErrorPurchaseTicket(cart, cid, products),
-        mensaje: "Error al realizar una compra",
-        codigo: EErrors.TIPO_INVALIDO,
-      });
       res.status(500).json({
         status: "error",
         error: "Error en el controlador al comprar un ticket",

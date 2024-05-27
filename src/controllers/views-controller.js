@@ -15,6 +15,7 @@ const { EErrors } = require("../services/errors/enums.js");
 class ViewsController {
   async viewProducts(req, res) {
     try {
+      if(!req.user) return res.redirect("/login")
       const userDto = new UserDTO(
         req.user.first_name,
         req.user.last_name,
@@ -23,6 +24,7 @@ class ViewsController {
         req.user.email,
         req.user.cart
       );
+      
 
       const findUser = await User.findById(req.session.passport.user);
       if (findUser) req.session.login = true;
