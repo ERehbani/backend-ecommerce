@@ -59,11 +59,10 @@ class ProductController {
     console.log("NEW PRODUCT IN CONTROLLER", newProduct);
     try {
       const product = await productService.addProduct(newProduct);
-      return res.status(201).json({
-        message: "Producto agregado exitosamente",
-        payload: product,
-      });
+      return res.redirect('back');
+
     } catch (error) {
+      console.log(error)
       CustomError.crearError({
         nombre: "Crear producto",
         causa: generateErrorAddProduct(newProduct),

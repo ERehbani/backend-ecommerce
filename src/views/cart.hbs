@@ -1,8 +1,57 @@
 <h1>Carrito de Compras</h1>
+<a href="/products"><svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#6728fc"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  ><circle cx="12" cy="12" r="10" /><path
+      d="M12 8l-4 4 4 4M16 12H9"
+    /></svg></a>
 
-{{#each products}}
-  <div>
-    <p>Producto: {{product}}</p>
-    <p>Cantidad: {{quantity}}</p>
-  </div>
-{{/each}}
+<div class="product-container">
+  {{#each products}}
+    <div class="product">
+      <p class="product-title">Producto: {{this.productTitle}}</p>
+      <p>Price: {{this.productPrice}}</p>
+      <p>Cantidad: {{this.quantity}}</p>
+
+      <form class="delete-form" data-product-id="{{this.productId}}">
+        <button type="submit" class="button-login">
+          Eliminar producto
+        </button>
+      </form>
+    </div>
+  {{/each}}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const productId = form.getAttribute('data-product-id');
+      const userId = '{{user.cart}}'; // Usar la variable correspondiente si está disponible en el contexto
+
+      try {
+        const response = await fetch(`/api/carts/${userId}/product/${productId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          // Opcionalmente, puedes actualizar la página o el DOM aquí
+          location.reload(); // Recargar la página para reflejar los cambios
+        } else {
+          console.error('Error al eliminar el producto del carrito');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    });
+  });
+});
+</script>

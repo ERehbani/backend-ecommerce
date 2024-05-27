@@ -223,3 +223,8 @@ a {
   width: max-content;
   margin: 0 auto;
 }
+
+
+.product-premium {
+  border: 2px solid green;
+}

@@ -54,3 +54,4 @@ error: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
 error: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
 error: Error en el middleware
 error: Error en el middleware
+error: Error en el middleware

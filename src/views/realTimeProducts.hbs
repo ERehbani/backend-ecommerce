@@ -17,7 +17,6 @@
   <input type="number" id="stock" placeholder="Stock" name="stock" />
   <input type="text" id="category" placeholder="Categoria" name="category" />
   {{#if isPremium}}
-
     <input type="text" id="owner" name="owner" value={{user.email}} readonly />
   {{/if}}
   <select id="status">
@@ -28,5 +27,9 @@
 </form>
 <div id="contenedorProductos" class="product-container"></div>
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-
+<script>
+  const user = { isPremium:
+  {{#if isPremium}}true{{else}}false{{/if}}, isAdmin:
+  {{#if isAdmin}}true{{else}}false{{/if}}, email: "{{user.email}}" };
+</script>
 <script src="/public/js/index.js"></script>

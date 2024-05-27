@@ -1,7 +1,6 @@
 const socket = io();
 
 socket.on("products", (data) => {
-  //console.log(data);
   renderProductos(data);
 });
 
@@ -11,23 +10,32 @@ const renderProductos = (productos) => {
   const contenedorProductos = document.getElementById("contenedorProductos");
   contenedorProductos.innerHTML = "";
 
-  // biome-ignore lint/complexity/noForEach: <explanation>
   productos.docs.forEach((item) => {
     const card = document.createElement("div");
     card.classList.add("card");
 
+    // Agregar una clase adicional si el producto pertenece a un usuario premium
+    if (user.isPremium && item.owner === user.email) {
+      card.classList.add("product-premium");
+    }
     card.innerHTML = ` 
     <div class="product">
-    <p class="product-title"> ${item.title} </p>
-    <p> $${item.price} </p>
-    <button class="button-login"> Eliminar </button>
+      <p class="product-title">${item.title}</p>
+      <p>$${item.price}</p>
+      <button class="button-login">Eliminar</button>
     </div>
-                        `;
-
+    `;
     contenedorProductos.appendChild(card);
-    //Agregamos el evento al boton de eliminar:
+
+    console.log("user in idex", user, item.owner);
     card.querySelector("button").addEventListener("click", () => {
-      eliminarProducto(item._id);
+      if (user.isPremium && item.owner === user.email) {
+        eliminarProducto(item._id);
+      } else if (user.isAdmin) {
+        eliminarProducto(item._id);
+      } else {
+        alert("Error, No tienes permiso para borrar ese producto");
+      }
     });
   });
 };
@@ -52,6 +60,7 @@ const agregarProducto = () => {
     stock: document.getElementById("stock").value,
     category: document.getElementById("category").value,
     status: document.getElementById("status").value === "true",
+    owner: document.getElementById("owner").value
   };
 
   socket.emit("addProduct", producto);

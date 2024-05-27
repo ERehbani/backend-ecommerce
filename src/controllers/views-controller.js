@@ -45,14 +45,8 @@ class ViewsController {
       req.session.usuario = userDto;
       const userWithCart = {
         ...userDto,
-        cart: req.session.usuario.cart, 
+        cart: req.session.usuario.cart,
       };
-
-      console.log("123456789", {
-        products: nuevoArray,
-        user: userWithCart,
-        isLoggedIn: req.session.login,
-      });
 
       res.render("products", {
         products: nuevoArray,
@@ -149,10 +143,12 @@ class ViewsController {
   }
 
   async viewPerfil(req, res) {
-    if (!req.session.login) {
+    if (!req.session.login || !req.session.usuario) {
       res.redirect("/login");
     } else {
-      const isAdmin = req.session.usuario.role === "Admin";
+      const isAdmin =
+        req.session.usuario.role === "Admin" ||
+        req.session.usuario.role === "Premium";
       res.render("profile", { user: req.session.usuario, isAdmin });
     }
   }
@@ -168,14 +164,8 @@ class ViewsController {
       ) {
         const isPremium = req.session.usuario.role === "Premium";
         const isAdmin = req.session.usuario.role === "Admin";
-        console.log("IS PREMIUM", isPremium);
-
-        res.render(
-          "realTimeProducts",
-          { user: req.session.usuario },
-          isPremium,
-          isAdmin
-        );
+        const data = { user: req.session.usuario, isPremium, isAdmin };
+        res.render("realTimeProducts", data);
       } else {
         res.redirect("/profile");
       }

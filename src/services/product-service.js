@@ -10,13 +10,12 @@ class ProductService {
     stock,
     category,
     thumbnails,
-    owner = "admin"
+    owner,
   }) {
-
     try {
-      if (!title || !description || !price || !code || !stock || !category || !owner) {
-        console.log("Todos los campos son obligatorios");
-        return;
+      if (!owner) owner = "admin";
+      if (!title || !description || !price || !code || !stock || !category) {
+        return "Todos los campos son obligatorios";
       }
 
       const existProduct = await ProductModel.findOne({ code: code });
@@ -34,7 +33,7 @@ class ProductService {
         status: true,
         category,
         thumbnails: thumbnails || [],
-        owner: owner
+        owner: owner || "admin",
       });
       await newProduct.save();
     } catch (error) {
@@ -80,7 +79,7 @@ class ProductService {
           : null,
       };
     } catch (error) {
-     console.log("Error al obtener los productos", error);
+      console.log("Error al obtener los productos", error);
     }
   }
 
@@ -124,8 +123,7 @@ class ProductService {
       }
 
       return deleteadito;
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 }
 

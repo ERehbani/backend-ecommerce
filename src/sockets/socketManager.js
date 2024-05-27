@@ -11,7 +11,6 @@ class SocketManager {
   async initSocketEvents() {
     this.io.on("connection", async (socket) => {
       socket.emit("products", await productService.getProducts());
-      console.log(await productService.getProducts());
       socket.on("deleteProducts", async (id) => {
         await productService.deleteProduct(id);
         this.emitUpdatedProducts(socket);
