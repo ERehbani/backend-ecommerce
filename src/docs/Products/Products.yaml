@@ -1,0 +1,220 @@
+paths:
+  /api/products:
+    get:
+      summary: Se obtienen todos los productos de la base de datos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Se obtienen todos los productos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Products"
+    post:
+      summary: Creacion de producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createProduct"
+      responses:
+        "201":
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Products"
+  /api/products/{id}:
+    get:
+      summary: Se obtiene un producto por ID
+      tags:
+        - Products
+      parameters: 
+      - name: id
+        in: path
+        required: true
+        description: id del producto que se quiere buscar
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Products"
+    put:
+      summary: Actualizar un producto por ID
+      tags:
+        - Products
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: id del producto que se quiere actualizar
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createProduct"
+      responses:
+        "200":
+          description: Producto actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto actualizado exitosamente
+        "400":
+          description: Error al actualizar el producto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Eliminar un producto por ID
+      tags:
+        - Products
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: id del producto que se quiere eliminar
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto eliminado correctamente
+                  deletedProduct:
+                    $ref: "#/components/schemas/Products"
+        "400":
+          description: El producto que desea borrar no existe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado por MongoDB
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        code:
+          type: string
+          description: Código único del producto que lo identifica
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Cantidad disponible del producto
+        status:
+          type: boolean
+          description: Estado de disponibilidad del producto
+        category:
+          type: string
+          description: Categoría a la que pertenece el producto
+        thumbnail:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: Imágenes que contiene el producto
+        owner:
+          type: string
+          description: Email del usuario al que pertenece el producto
+      example:
+        _id: "65c16244a34c623a26501f64"
+        title: Paquete de fideos Marolio
+        description: Paquete de fideos 500g
+        code: "9001002"
+        price: 500
+        stock: 250
+        status: true
+        category: Comidas
+        thumbnail:
+          - "https://maxiconsumo.com/media/catalog/product/cache/8313a15b471f948db4d9d07d4a9f04a2/2/1/21645_1715226028663c45ac4f4f04.98123354.jpg"
+        owner: dibu@gmail.com
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        code:
+          type: string
+          description: Código único del producto que lo identifica
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Cantidad disponible del producto
+        status:
+          type: boolean
+          description: Estado de disponibilidad del producto
+        category:
+          type: string
+          description: Categoría a la que pertenece el producto
+        thumbnail:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: Imágenes que contiene el producto
+        owner:
+          type: string
+          description: Email del usuario al que pertenece el producto
+      example:
+        title: Paquete de fideos Marolio
+        description: Paquete de fideos 500g
+        code: "9001002"
+        price: 500
+        stock: 250
+        category: Comidas
+        thumbnail:
+          - "https://maxiconsumo.com/media/catalog/product/cache/8313a15b471f948db4d9d07d4a9f04a2/2/1/21645_1715226028663c45ac4f4f04.98123354.jpg"
+        owner: dibu@gmail.com
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Descripción del error
