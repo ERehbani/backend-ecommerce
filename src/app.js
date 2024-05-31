@@ -17,7 +17,9 @@ const cookieParser = require("cookie-parser");
 const initializePassport = require("./config/passport.config");
 const handleError = require("./middleware/error.js");
 const addLogger = require("./utils/logger.js");
-const path = require('node:path');
+const path = require("node:path");
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUiExpress = require("swagger-ui-express");
 
 require("./database");
 
@@ -55,7 +57,7 @@ app.use(
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(addLogger)
+app.use(addLogger);
 
 app.use(cookieParser("secret"));
 app.engine("hbs", exphbs.engine());
@@ -71,11 +73,25 @@ app.use("/api", cartRouter);
 app.use("/api", userRouter);
 app.use("/api", sessionRouter);
 
-app.use(handleError)
+app.use(handleError);
 
 httpServer.listen(8080, () => {
   console.log("8080 🌎");
 });
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Documentacion Ecommerce Coderhouse",
+      description:
+        "App dedicada a la integracion de un ecomerce a las entregas de Coderhouse",
+    },
+  },
+  apis: ["./src/docs/**/*.yaml"],
+};
+const specs = swaggerJSDoc(swaggerOptions);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 io.on("connection", (socket) => {
   console.log("Nuevo usuario conectado");

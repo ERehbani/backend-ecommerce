@@ -1,0 +1,185 @@
+paths:
+  /api/users:
+    get:
+      summary: Obtenemos los usuarios de la Base de datos
+      tags:
+        - Users
+      responses:
+        "200":
+          description: Obtienen todos los usuarios correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "500":
+          description: Error interno del servidor
+  /api/sessions:
+    post:
+      summary: Endpoint para creacion de usuario
+      tags:
+        - Users
+      responses:
+        "200":
+          description: Registro exitoso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Register"
+        "500":
+          description: Registro fallido
+  /api/profile:
+    get:
+      summary: Endpoint para vista del usuario logueado
+      tags:
+        - Users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CurrentUser"
+  /api/reset-password-request:
+    post:
+      summary: Solicitud de restablecimiento de contraseña
+      tags:
+        - Password Reset
+      requestBody:
+        description: Datos necesarios para solicitar el restablecimiento de la contraseña
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario
+      responses:
+        "200":
+          description: Solicitud de restablecimiento de contraseña exitosa
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error en el controlador al enviar un email
+  /api/reset-password:
+    post:
+      summary: Restablecimiento de contraseña
+      tags:
+        - Password Reset
+      requestBody:
+        description: Datos necesarios para restablecer la contraseña
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario
+                password:
+                  type: string
+                  description: Nueva contraseña del usuario
+                token:
+                  type: string
+                  description: Token de restablecimiento de contraseña
+      responses:
+        "200":
+          description: Restablecimiento de contraseña exitoso
+        "404":
+          description: Usuario no encontrado o token inválido
+        "500":
+          description: Error al restablecer la contraseña en el controlador
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado por MongoDB
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        password:
+          type: string
+          description: Password del usuario hasheado con bcrypt
+        email:
+          type: string
+          description: Email del usuario
+        age:
+          type: number
+          description: Edad del usuario
+        cart:
+          type: string
+          description: Id del carrito asignado al usuario cuando se creó el usuario
+        role:
+          type: string
+          description: Rol que cumple el usuario
+      example:
+        _id: "12345678"
+        first_name: Julian
+        last_name: Alvarez
+        password: 664b9a3a8761d1aef86ef6f9
+        email: julian@gmail.com
+        age: 21
+        cart: "664b9a3a8761d1aef86ef6f9"
+        role: user
+    Register:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado por MongoDB
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        password:
+          type: string
+          description: Password del usuario hasheado con bcrypt
+        email:
+          type: string
+          description: Email del usuario
+        age:
+          type: number
+          description: Edad del usuario
+        cart:
+          type: string
+          description: Id del carrito asignado al usuario cuando se creó el usuario
+        role:
+          type: string
+          description: Rol que cumple el usuario
+      example:
+        first_name: Julian
+        last_name: Alvarez
+        password: "1234"
+        email: julian@gmail.com
+        age: 21
+    CurrentUser:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        role:
+          type: string
+          description: Rol que cumple el usuario
+      example:
+        first_name: Julian
+        last_name: Alvarez
+        role: user

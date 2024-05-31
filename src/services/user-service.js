@@ -10,6 +10,13 @@ class UserService {
       req.logger.error(error);
     }
   }
+  async getAllUsers() {
+    try {
+      return await UserModel.find()
+    } catch (error) {
+      req.logger.error
+    }
+  }
 
   async getCartsUser(cartId) {
     try {

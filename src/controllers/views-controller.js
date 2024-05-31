@@ -16,14 +16,15 @@ class ViewsController {
   async viewProducts(req, res) {
     try {
       if(!req.user) return res.redirect("/login")
-      const userDto = new UserDTO(
-        req.user.first_name,
-        req.user.last_name,
-        req.user.role,
-        req.user.age,
-        req.user.email,
-        req.user.cart
-      );
+        const userDto = new UserDTO(
+      req.user.first_name,
+      req.user.last_name,
+      req.user.role,
+      req.user.age,
+      req.user.email,
+      req.user.cart
+    );
+    console.table(userDto)
       
 
       const findUser = await User.findById(req.session.passport.user);

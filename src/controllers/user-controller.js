@@ -21,20 +21,6 @@ class UserController {
     try {
       const { first_name, last_name, email, password, age } = req.body;
 
-      // if (!first_name || !last_name || !email || !password || !age) {
-      //   CustomError.crearError({
-      //     nombre: "Usuario nuevo",
-      //     causa: generateErrorUser({
-      //       first_name,
-      //       last_name,
-      //       email,
-      //       password,
-      //       age,
-      //     }),
-      //     mensaje: "Error al intentar crear usuario",
-      //     codigo: EErrors.TIPO_INVALIDO,
-      //   });
-      // }
       const userExist = await userService.getUserByEmail(email);
       req.logger.info(userExist);
       if (userExist) return res.status(400).send("El usuario ya existe");
@@ -64,6 +50,11 @@ class UserController {
 
   async failedRegister(req, res) {
     res.send({ error: "Registro fallido" });
+  }
+
+  async getAllUsers(req, res) {
+    const users = await userService.getAllUsers()
+    res.json(users)
   }
 
   async currentUser(req, res) {

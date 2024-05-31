@@ -55,6 +55,8 @@ router.post(
 
 router.get("/failedregister", userController.failedRegister);
 
+router.get("/users", userController.getAllUsers)
+
 router.get("/profile", userController.currentUser);
 
 router.post("/reset-password-request", userController.requresPasswordReset);
