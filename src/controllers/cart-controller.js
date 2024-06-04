@@ -98,11 +98,14 @@ class CartController {
     const productId = req.params.pid;
     const quantity = req.body.quantity || 1;
 
+    const product = await productService.getProductById(productId);
+    console.log("product stock", product.stock);
     try {
       const updateCart = await cartSevice.addProductToCart(
         cartId,
         productId,
-        quantity
+        quantity,
+        product.stock
       );
       if (!updateCart) {
         CustomError.crearError({
@@ -112,7 +115,10 @@ class CartController {
           codigo: EErrors.TIPO_INVALIDO,
         });
       }
+
+      return res.send(updateCart);
     } catch (error) {
+      console.log(error)
       req.logger.error(error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
@@ -198,10 +204,11 @@ class CartController {
   async purchaseTicket(req, res) {
     const { cid } = req.params;
     const cart = await cartSevice.getCartById(cid);
-
+    console.log("carrito",cart.products)
     const products = cart.products;
+    console.log("Products", products[0].stock);
     try {
-      if (cart.products[0].quantity > products.stock || !products.stock) {
+      if (cart.products[0].quantity > products[0].stock || !products[0].stock) {
         return res.status(401).json({
           "La compra no puede ser realizada ya que no hay el stock necesario de este producto":
             products,
@@ -257,6 +264,7 @@ class CartController {
         },
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         status: "error",
         error: "Error en el controlador al comprar un ticket",

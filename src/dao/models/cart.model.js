@@ -12,6 +12,7 @@ const cartSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      stock: { type: Number },
     },
   ],
 });

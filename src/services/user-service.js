@@ -14,7 +14,7 @@ class UserService {
     try {
       return await UserModel.find()
     } catch (error) {
-      req.logger.error
+      console.log(error)
     }
   }
 
@@ -26,7 +26,7 @@ class UserService {
       }
       return user;
     } catch (error) {
-      req.logger.error(error);
+      console.log(error);
       throw error;
     }
   }

@@ -1,5 +1,7 @@
 const CartModel = require("../dao/models/cart.model");
 const ProductModel = require("../dao/models/product.model");
+const ProductService = require("./product-service");
+const productService = new ProductService();
 
 class CartService {
   async crearCart() {
@@ -8,7 +10,6 @@ class CartService {
       await newCart.save();
       return newCart;
     } catch (error) {
-      req.logger.error("Error al crear el nuevo carrito");
       return null;
     }
   }
@@ -17,38 +18,33 @@ class CartService {
     try {
       const cart = await CartModel.findById(cartId).populate("products");
       if (!cart) {
-        req.logger.error(`No existe el carrito con el id ${cartId}`);
+        console.log(`No existe el carrito con el id ${cartId}`);
         return null;
       }
 
       return cart;
     } catch (error) {
-      req.logger.error("Error al traer el carrito por id");
-      throw error;
+      throw new Error(error);
     }
   }
 
-  async addProductToCart(cartId, productId, quantity = 1) {
-    try {
-      const carrito = await this.getCartById(cartId);
-      const existeProducto = carrito.products.find(
-        (item) => item.product._id.toString() === productId
-      );
-
-      if (existeProducto) {
-        existeProducto.quantity += quantity;
-      } else {
-        carrito.products.push({ product: productId, quantity });
-      }
-
-      //Vamos a marcar la propiedad "products" como modificada antes de guardar:
-      carrito.markModified("products");
-
-      await carrito.save();
-      return carrito;
-    } catch (error) {
-      req.logger.error("Error al agregar un producto", error);
+  async addProductToCart(cartId, productId, quantity, stock) {
+    const cart = await CartModel.findById(cartId);
+    if (!cart) {
+      throw new Error(`No existe el carrito con el id ${cartId}`);
     }
+
+    const productIndex = cart.products.findIndex(
+      (p) => p.product.toString() === productId
+    );
+    if (productIndex !== -1) {
+      cart.products[productIndex].quantity += quantity;
+      cart.products[productIndex].stock = stock; // Update stock here
+    } else {
+      cart.products.push({ product: productId, quantity, stock }); // Add stock here
+    }
+
+    return cart.save();
   }
 
   async deleteProductFromCart(cartId, productId) {
@@ -65,8 +61,7 @@ class CartService {
       await cart.save();
       return cart;
     } catch (error) {
-      req.logger.error("Error al eliminar el producto del carrito");
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -82,8 +77,7 @@ class CartService {
       cart.markModified("products");
       await cart.save();
     } catch (error) {
-      req.logger.error("Error al actualizar el carrito en el gestor", error);
-      throw error;
+      throw new Error(error);
     }
   }
 
@@ -102,7 +96,6 @@ class CartService {
         });
       }
     } catch (error) {
-      req.logger.error;
       res.status(500).json({ status: "error", message: error.message });
     }
   }
@@ -121,18 +114,17 @@ class CartService {
 
       return cart;
     } catch (error) {
-      req.logger.error("Error al vaciar el carrito", error);
-      throw error;
+      throw new Error(error);
     }
   }
 
   async purchaseTicket(cartID) {
     try {
       const cart = await CartModel.findById(cartID);
-      req.logger.info(cart);
+      console.log(cart);
       return cart;
     } catch (error) {
-      req.logger.error("Error al comprar el ticket en service", error);
+      throw new Error(error);
     }
   }
 }

@@ -9,6 +9,7 @@ const {
   generateErrorGetId,
 } = require("../services/errors/info");
 const { EErrors } = require("../services/errors/enums");
+const ProductModel = require("../dao/models/product.model");
 
 class ProductController {
   async getProducts(req, res) {
@@ -66,7 +67,7 @@ class ProductController {
           codigo: EErrors.TIPO_INVALIDO,
         });
       }
-      
+
       return res.status(302).redirect("back");
     } catch (error) {
       console.log(error);
@@ -118,10 +119,11 @@ class ProductController {
   }
 
   async deleteProductByCode(req, res) {
-    const code = req.params.code
+    const code = req.params.code;
     try {
-      const result = await UserModel.findOneAndDelete({code})
-      if(!result) {
+      const result = await ProductModel.findOneAndDelete({ code: code });
+      console.log("RESULT", result)
+      if (!result) {
         return res.status(404).send({ error: "Producto no encontrado" });
       }
       res.status(200).send({ message: "Producto eliminado con éxito" });
