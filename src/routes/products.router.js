@@ -15,6 +15,10 @@ router.put("/products/:pid", productController.updateProduct);
 
 router.delete("/products/:pid", productController.deleteProduct);
 
+// Rutas para test
+
+router.delete("/products/test/:code", productController.deleteProductByCode)
+
 
 ///////////////////////MOCKING PRODUCTS////////////////////////////////
 router.get("/mockingproducts", (req, res) => {

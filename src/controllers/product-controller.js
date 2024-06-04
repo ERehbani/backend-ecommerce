@@ -61,12 +61,13 @@ class ProductController {
       if (!product) {
         CustomError.crearError({
           nombre: "Crear producto",
-          causa: generateErrorAddProduct(newProduct),
+          causa: generateErrorAddProduct(newProduct.title),
           mensaje: "Error al crear un producto",
           codigo: EErrors.TIPO_INVALIDO,
         });
       }
-      return res.redirect("back");
+      
+      return res.status(302).redirect("back");
     } catch (error) {
       console.log(error);
     }
@@ -113,6 +114,19 @@ class ProductController {
     } catch (error) {
       req.logger.error(error);
       return res.status(500).send({ error: "Error interno del servidor" });
+    }
+  }
+
+  async deleteProductByCode(req, res) {
+    const code = req.params.code
+    try {
+      const result = await UserModel.findOneAndDelete({code})
+      if(!result) {
+        return res.status(404).send({ error: "Producto no encontrado" });
+      }
+      res.status(200).send({ message: "Producto eliminado con éxito" });
+    } catch (error) {
+      res.status(500).send({ error: "Error interno del servidor" });
     }
   }
 }

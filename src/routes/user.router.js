@@ -57,10 +57,13 @@ router.get("/failedregister", userController.failedRegister);
 
 router.get("/users", userController.getAllUsers)
 
+
 router.get("/profile", userController.currentUser);
 
 router.post("/reset-password-request", userController.requresPasswordReset);
 
 router.post("/reset-password", userController.resetPassword);
 
+// Rutas para test
+router.delete("/users/:email", userController.deleteUserByEmail)
 module.exports = router;

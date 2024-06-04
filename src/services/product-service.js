@@ -36,8 +36,9 @@ class ProductService {
         owner: owner || "admin",
       });
       await newProduct.save();
+      return newProduct;
     } catch (error) {
-      console.log("Error al agregar producto");
+      console.log(error, "Error al agregar producto");
       throw error;
     }
   }

@@ -40,11 +40,25 @@ class UserController {
         role: "User",
       });
 
-      await newUser.save();
+      const result = await newUser.save();
       res.redirect("/login");
+      return result
     } catch (error) {
       req.logger.error(error);
       res.status(500).send("Error al crear un usuario en el controlador");
+    }
+  }
+
+  async deleteUserByEmail(req, res) {
+    const email = req.params.email;
+    try {
+      const result = await UserModel.findOneAndDelete({ email: email });
+      if (!result) {
+        return res.status(404).send({ error: "Usuario no encontrado" });
+      }
+      res.status(200).send({ message: "Usuario eliminado con éxito" });
+    } catch (error) {
+      res.status(500).send({ error: "Error interno del servidor" });
     }
   }
 
