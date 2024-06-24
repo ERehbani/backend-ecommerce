@@ -15,6 +15,7 @@ const { EErrors } = require("../services/errors/enums");
 const { generateResetToken } = require("../utils/tokenReset");
 const EmailManager = require("../utils/email");
 const emailManager = new EmailManager();
+const nodemailer = require("nodemailer");
 
 class UserController {
   async createUser(req, res) {
@@ -42,7 +43,7 @@ class UserController {
 
       const result = await newUser.save();
       res.redirect("/login");
-      return result
+      return result;
     } catch (error) {
       req.logger.error(error);
       res.status(500).send("Error al crear un usuario en el controlador");
@@ -56,6 +57,7 @@ class UserController {
       if (!result) {
         return res.status(404).send({ error: "Usuario no encontrado" });
       }
+
       res.status(200).send({ message: "Usuario eliminado con éxito" });
     } catch (error) {
       res.status(500).send({ error: "Error interno del servidor" });
@@ -67,8 +69,14 @@ class UserController {
   }
 
   async getAllUsers(req, res) {
-    const users = await userService.getAllUsers()
-    res.json(users)
+    const users = await userService.getAllUsers();
+
+    const filterUsers = users.map((user) => ({
+      last_connection: user.last_connection,
+    }));
+    const date = new Date();
+    console.log(date.getDate());
+    return filterUsers;
   }
 
   async currentUser(req, res) {
@@ -131,6 +139,10 @@ class UserController {
     if (req.session.login) {
       req.session.destroy();
     }
+    console.log("USUARIO", req.user._id);
+    await UserModel.findByIdAndUpdate(req.user._id, {
+      last_connection: new Date(),
+    });
     res.status(200).redirect("/login");
   }
 
@@ -186,7 +198,7 @@ class UserController {
 
       const now = new Date();
       if (now > resetToken.expiresAt) {
-        return res.redirect("/reset-password")
+        return res.redirect("/reset-password");
       }
 
       if (isValidPassword(user, password)) {
@@ -206,6 +218,94 @@ class UserController {
       return res
         .status(500)
         .send("Error al restablecer la contraseña en el controlador");
+    }
+  }
+
+  async premiumUser(req, res) {
+    try {
+      console.log(req.session.usuario);
+      const newRole =
+        req.session.usuario.role === "Premium" ? "User" : "Premium";
+
+      const user = await userService.updateUserRoleByEmail(
+        req.session.usuario.email,
+        newRole
+      );
+
+      req.session.destroy();
+      res.redirect("/login");
+      console.log("usuarioooooo", user);
+      return user;
+    } catch (error) {
+      console.log(error);
+      req.logger.error(error);
+    }
+  }
+
+  async makePremium(req, res) {
+    try {
+      const userId = req.params.uid;
+      const documentPath = req.file.path;
+
+      // Actualiza el modelo del usuario con el nuevo documento
+      await UserModel.findByIdAndUpdate(userId, {
+        $push: {
+          documents: {
+            name: req.file.originalname,
+            reference: documentPath,
+          },
+        },
+        last_connection: new Date(),
+      });
+
+      res.status(200).json({
+        message: "Documento cargado y usuario actualizado exitosamente.",
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error al cargar el documento.", error });
+    }
+  }
+
+  async deleteByInactivity(req, res) {
+    try {
+      const now = new Date();
+      const thresholdDate = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+
+      const inactiveUsers = await UserModel.find({
+        last_connection: { $lt: thresholdDate },
+      });
+
+      if (inactiveUsers.length === 0) {
+        return res.status(200).send({ message: "No hay usuarios inactivos." });
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        port: 587,
+        auth: {
+          user: "eliancoderhouse@gmail.com",
+          pass: "mvrs dgwe ixfy gzam",
+        },
+      });
+
+      // biome-ignore lint/style/useConst: <explanation>
+      for (let user of inactiveUsers) {
+        const mailOptions = {
+          from: "eliancoderhouse@gmail.com",
+          to: user.email,
+          subject: "Cuenta eliminada por inactividad",
+          text: `Hola ${user.first_name},\n\nTu cuenta ha sido eliminada por inactividad.\n\nSaludos,\nEl equipo de Soporte`,
+        };
+        await transporter.sendMail(mailOptions);
+        await UserModel.findByIdAndDelete(user._id);
+      }
+      res
+        .status(200)
+        .send({ message: "Usuarios inactivos eliminados y notificados" });
+
+      res.status(200).send({ inactiveUsers });
+    } catch (error) {
+      res.status(500).send({ error: "Error eliminando usuarios inactivos" });
     }
   }
 }

@@ -1,4 +1,4 @@
-const  mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const UserModel = require("../dao/models/user.model");
 
 class UserService {
@@ -10,19 +10,35 @@ class UserService {
       req.logger.error(error);
     }
   }
+
+  async updateUserRoleByEmail(email, newRole) {
+    try {
+      const result = await UserModel.updateOne(
+        { email: email },
+        { $set: { role: newRole } }
+      );
+
+      return result;
+    } catch (error) {
+      req.logger.error(error);
+    }
+  }
+
   async getAllUsers() {
     try {
-      return await UserModel.find()
+      return await UserModel.find();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   async getCartsUser(cartId) {
     try {
-      const user = await UserModel.findOne({ cart: new mongoose.Types.ObjectId(cartId) });
+      const user = await UserModel.findOne({
+        cart: new mongoose.Types.ObjectId(cartId),
+      });
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
       return user;
     } catch (error) {

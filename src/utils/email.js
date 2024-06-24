@@ -12,6 +12,22 @@ class EmailManager {
     });
   }
 
+  async sendMailDeleteProduct(email, item) {
+    try {
+      const mailOptions = {
+        from: "eliancoderhouse@gmail.com",
+        to: email,
+        subject: "Producto eliminado del catalogo",
+        text: `Hola ${email},\n\nTu producto ${item}.\n\nSaludos,\nEl equipo de Soporte`,
+      };
+
+      await this.transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.log("Error al enviar correo electronico", error);
+      throw new Error("Error al enviar correo electronico");
+    }
+  }
+
   async sendMailResetPassword(email, first_name, token) {
     try {
       const mailOptions = {

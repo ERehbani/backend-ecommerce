@@ -99,7 +99,8 @@ class ProductController {
     const id = req.params.pid;
     try {
       const deletedProduct = await productService.deleteProduct(id);
-
+      console.log(deletedProduct);
+      console.log({owner: deletedProduct.owner})
       if (!deletedProduct) {
         CustomError.crearError({
           nombre: "Eliminar producto",
@@ -108,6 +109,8 @@ class ProductController {
           codigo: EErrors.TIPO_INVALIDO,
         });
       }
+     
+
       res.status(200).send({
         message: "Producto eliminado correctamente",
         deletedProduct: deletedProduct,
@@ -122,7 +125,7 @@ class ProductController {
     const code = req.params.code;
     try {
       const result = await ProductModel.findOneAndDelete({ code: code });
-      console.log("RESULT", result)
+      console.log("RESULT", result);
       if (!result) {
         return res.status(404).send({ error: "Producto no encontrado" });
       }

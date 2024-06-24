@@ -27,12 +27,11 @@ const renderProductos = (productos) => {
     `;
     contenedorProductos.appendChild(card);
 
-    console.log("user in idex", user, item.owner);
-    card.querySelector("button").addEventListener("click", () => {
+    card.querySelector("button").addEventListener("click", async () => {
       if (user.isPremium && item.owner === user.email) {
-        eliminarProducto(item._id);
+        eliminarProducto(item._id, item.owner, item.title);
       } else if (user.isAdmin) {
-        eliminarProducto(item._id);
+        eliminarProducto(item._id, item.owner, item.title);
       } else {
         alert("Error, No tienes permiso para borrar ese producto");
       }
@@ -40,8 +39,9 @@ const renderProductos = (productos) => {
   });
 };
 
-const eliminarProducto = (id) => {
-  socket.emit("deleteProducts", id);
+const eliminarProducto = (id, email, title) => {
+  socket.emit("deleteProducts", id, email, title);
+  console.log(id, "VETGA");
 };
 
 //Agregamos productos del formulario:
@@ -60,7 +60,7 @@ const agregarProducto = () => {
     stock: document.getElementById("stock").value,
     category: document.getElementById("category").value,
     status: document.getElementById("status").value === "true",
-    owner: document.getElementById("owner").value
+    owner: document.getElementById("owner").value,
   };
 
   socket.emit("addProduct", producto);

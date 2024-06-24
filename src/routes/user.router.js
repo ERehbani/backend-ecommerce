@@ -4,6 +4,7 @@ const UserModel = require("../dao/models/user.model");
 const { createHash } = require("../utils/hashBcrypt");
 const passport = require("passport");
 const UserController = require("../controllers/user-controller");
+const upload = require("../middleware/multer");
 const userController = new UserController();
 
 // Post para generar un usuario y almacenarlo en mongoDB
@@ -55,15 +56,29 @@ router.post(
 
 router.get("/failedregister", userController.failedRegister);
 
-router.get("/users", userController.getAllUsers)
-
+router.get("/users", userController.getAllUsers);
 
 router.get("/profile", userController.currentUser);
+
+router.get("/users/premium/:uid", userController.premiumUser);
+
+
+router.post(
+  "/users/:uid/documents",
+  upload.fields([
+    { name: "profileImage", maxCount: 1 },
+    { name: "productImage", maxCount: 1 },
+    { name: "document", maxCount: 1 },
+  ]),
+  userController.makePremium
+);
 
 router.post("/reset-password-request", userController.requresPasswordReset);
 
 router.post("/reset-password", userController.resetPassword);
 
 // Rutas para test
-router.delete("/users/:email", userController.deleteUserByEmail)
+router.delete("/users/:email", userController.deleteUserByEmail);
+
+router.delete("/users", userController.deleteByInactivity)
 module.exports = router;

@@ -26,7 +26,6 @@ const userSchema = mongoose.Schema({
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Carts",
-  
   },
   role: {
     type: String,
@@ -35,8 +34,17 @@ const userSchema = mongoose.Schema({
 
   resetToken: {
     token: String,
-    expiresAt: Date
-  }
+    expiresAt: Date,
+  },
+  documents: [
+    {
+      name: String,
+      reference: String,
+    },
+  ],
+  last_connection: {
+    type: Date,
+  },
 });
 
 const UserModel = mongoose.model("user", userSchema);

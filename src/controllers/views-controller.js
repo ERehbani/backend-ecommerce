@@ -11,21 +11,24 @@ const {
   generateErrorGetId,
 } = require("../services/errors/info.js");
 const { EErrors } = require("../services/errors/enums.js");
+const UserService = require("../services/user-service.js");
+const UserController = require("./user-controller.js");
+const userController = new UserController()
+const userService = new UserService();
 
 class ViewsController {
   async viewProducts(req, res) {
     try {
-      if(!req.user) return res.redirect("/login")
-        const userDto = new UserDTO(
-      req.user.first_name,
-      req.user.last_name,
-      req.user.role,
-      req.user.age,
-      req.user.email,
-      req.user.cart
-    );
-    console.table(userDto)
-      
+      if (!req.user) return res.redirect("/login");
+      const userDto = new UserDTO(
+        req.user.first_name,
+        req.user.last_name,
+        req.user.role,
+        req.user.age,
+        req.user.email,
+        req.user.cart
+      );
+      console.table(userDto);
 
       const findUser = await User.findById(req.session.passport.user);
       if (findUser) req.session.login = true;
@@ -152,7 +155,14 @@ class ViewsController {
       const isAdmin =
         req.session.usuario.role === "Admin" ||
         req.session.usuario.role === "Premium";
-      res.render("profile", { user: req.session.usuario, isAdmin });
+
+      const isPremium = req.session.usuario.role === "Premium";
+      const result = await userService.getUserByEmail(
+        req.session.usuario.email
+      );
+
+      req.session.usuario._id = result._id;
+      res.render("profile", { user: req.session.usuario, isAdmin, isPremium });
     }
   }
 
@@ -196,6 +206,26 @@ class ViewsController {
         codigo: EErrors.TIPO_INVALIDO,
       });
       res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+
+  async dashboard(req, res) {
+    try {
+      if (req.session.usuario && req.session.usuario.role === "Admin") {
+        const users = await userService.getAllUsers();
+        const mapUsers = users.map(user => ({
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          role: user.role,
+          id: user.id
+        }))
+        res.render("dashboard", { users: mapUsers });
+      } else {
+        res.status(403).send("Acceso denegado");
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 }
