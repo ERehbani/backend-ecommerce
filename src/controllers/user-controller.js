@@ -38,6 +38,7 @@ class UserController {
         cart: newCart._id,
         password: createHash(password),
         age,
+        avatarImg: "",
         role: "User",
       });
 
@@ -130,7 +131,16 @@ class UserController {
           codigo: EErrors.TIPO_INVALIDO,
         });
       } else {
-        res.redirect("/products");
+        console.log(
+          "REQ SESSION USUARIO",
+          req.session.usuario,
+          "REQ SESSION LOGIN",
+          req.session.login
+        );
+        res.json({
+          usuario: req.session.usuario,
+          login: req.session.login,
+        });
       }
     });
   }

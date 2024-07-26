@@ -23,6 +23,9 @@ const userSchema = mongoose.Schema({
     type: Number,
     // required: true,
   },
+  avatarImg: {
+    type: String,
+  },
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Carts",

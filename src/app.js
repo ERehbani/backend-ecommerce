@@ -21,7 +21,7 @@ const path = require("node:path");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUiExpress = require("swagger-ui-express");
 const multer = require("multer");
-const upload  = require("./middleware/multer.js");
+const upload = require("./middleware/multer.js");
 
 require("./database");
 
@@ -37,7 +37,14 @@ const httpServer = http.createServer(app);
 const io = socketIO(httpServer);
 
 app.use("/public", express.static("public"));
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 app.use(
   express.urlencoded({
     extended: true,
@@ -76,7 +83,6 @@ app.use("/api", userRouter);
 app.use("/api", sessionRouter);
 
 app.use(handleError);
-
 
 httpServer.listen(8080, () => {
   console.log("8080 🌎");
