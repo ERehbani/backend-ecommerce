@@ -137,10 +137,8 @@ class UserController {
           "REQ SESSION LOGIN",
           req.session.login
         );
-        res.json({
-          usuario: req.session.usuario,
-          login: req.session.login,
-        });
+
+        res.redirect(`http://localhost:3000`);
       }
     });
   }

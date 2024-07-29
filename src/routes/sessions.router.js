@@ -26,7 +26,7 @@ router.get(
 
 router.get(
   "/sessions/githubcallback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
+  passport.authenticate("github"),
   userController.loginGitHub
 );
 router.get("/profile", (req, res) => {
