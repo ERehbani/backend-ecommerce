@@ -6,6 +6,7 @@ const CartModel = require("../dao/models/cart.model");
 const UserModel = require("../dao/models/user.model");
 const CartService = require("../services/cart-service");
 const CustomError = require("../services/errors/custom-error");
+const jwt = require("jsonwebtoken");
 const cartService = new CartService();
 const {
   generateErrorUser,
@@ -16,6 +17,8 @@ const { generateResetToken } = require("../utils/tokenReset");
 const EmailManager = require("../utils/email");
 const emailManager = new EmailManager();
 const nodemailer = require("nodemailer");
+
+const JWT_SECRET = "jwtsecret";
 
 class UserController {
   async createUser(req, res) {
@@ -137,8 +140,20 @@ class UserController {
           "REQ SESSION LOGIN",
           req.session.login
         );
+        const token = jwt.sign(
+          {
+            usuario: req.session.usuario,
+            login: true,
+          },
+          JWT_SECRET,
+          { expiresIn: "1h" }
+        );
 
-        res.redirect(`http://localhost:3000`);
+        res.cookie("auth_token", token, {
+          // httpOnly: true,
+          maxAge: 3600000,
+        });
+        res.redirect("http://localhost:3000");
       }
     });
   }
