@@ -20,7 +20,7 @@ function viewsRouter() {
 
   router.get("/profile", viewsController.viewPerfil);
 
-  router.get("/", (req, res) => res.render("home"));
+  router.get("/", (req, res) => res.redirect("/apidocs"));
 
   router.get("/realtimeproducts", viewsController.realTimeProducts);
 

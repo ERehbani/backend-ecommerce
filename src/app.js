@@ -92,9 +92,9 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.1",
     info: {
-      title: "Documentacion Ecommerce Coderhouse",
+      title: "Documentation Ecommerce",
       description:
-        "App dedicada a la integracion de un ecomerce a las entregas de Coderhouse",
+        "App dedicada a la integracion de un ecomerce",
     },
   },
   apis: ["./src/docs/**/*.yaml"],

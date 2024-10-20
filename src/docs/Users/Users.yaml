@@ -1,12 +1,12 @@
 paths:
   /api/users:
     get:
-      summary: Obtenemos los usuarios de la base de datos
+      summary: Retrieve users from the database
       tags:
         - Users
       responses:
         "200":
-          description: Obtienen todos los usuarios correctamente
+          description: All users retrieved successfully
           content:
             application/json:
               schema:
@@ -14,15 +14,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/User"
         "500":
-          description: Error interno del servidor
+          description: Internal server error
   /api/sessions:
     post:
-      summary: Endpoint para creacion de usuario
+      summary: Endpoint for user creation
       tags:
         - Users
       responses:
         "200":
-          description: Registro exitoso
+          description: Successful registration
           content:
             application/json:
               schema:
@@ -30,10 +30,10 @@ paths:
                 items:
                   $ref: "#/components/schemas/Register"
         "500":
-          description: Registro fallido
+          description: Registration failed
   /api/profile:
     get:
-      summary: Endpoint para vista del usuario logueado
+      summary: Endpoint to view the logged-in user
       tags:
         - Users
       responses:
@@ -46,11 +46,11 @@ paths:
                   $ref: "#/components/schemas/CurrentUser"
   /api/reset-password-request:
     post:
-      summary: Solicitud de restablecimiento de contraseña
+      summary: Password reset request
       tags:
         - Password Reset
       requestBody:
-        description: Datos necesarios para solicitar el restablecimiento de la contraseña
+        description: Required data to request a password reset
         required: true
         content:
           application/json:
@@ -59,21 +59,21 @@ paths:
               properties:
                 email:
                   type: string
-                  description: Email del usuario
+                  description: User's email
       responses:
         "200":
-          description: Solicitud de restablecimiento de contraseña exitosa
+          description: Password reset request successful
         "404":
-          description: Usuario no encontrado
+          description: User not found
         "500":
-          description: Error en el controlador al enviar un email
+          description: Error sending the email in the controller
   /api/reset-password:
     post:
-      summary: Restablecimiento de contraseña
+      summary: Password reset
       tags:
         - Password Reset
       requestBody:
-        description: Datos necesarios para restablecer la contraseña
+        description: Required data to reset the password
         required: true
         content:
           application/json:
@@ -82,20 +82,20 @@ paths:
               properties:
                 email:
                   type: string
-                  description: Email del usuario
+                  description: User's email
                 password:
                   type: string
-                  description: Nueva contraseña del usuario
+                  description: New user password
                 token:
                   type: string
-                  description: Token de restablecimiento de contraseña
+                  description: Password reset token
       responses:
         "200":
-          description: Restablecimiento de contraseña exitoso
+          description: Password reset successful
         "404":
-          description: Usuario no encontrado o token inválido
+          description: User not found or invalid token
         "500":
-          description: Error al restablecer la contraseña en el controlador
+          description: Error resetting the password in the controller
 components:
   schemas:
     User:
@@ -103,28 +103,28 @@ components:
       properties:
         _id:
           type: string
-          description: Id autogenerado por MongoDB
+          description: Auto-generated ID by MongoDB
         first_name:
           type: string
-          description: Nombre del usuario
+          description: User's first name
         last_name:
           type: string
-          description: Apellido del usuario
+          description: User's last name
         password:
           type: string
-          description: Password del usuario hasheado con bcrypt
+          description: User's password hashed with bcrypt
         email:
           type: string
-          description: Email del usuario
+          description: User's email
         age:
           type: number
-          description: Edad del usuario
+          description: User's age
         cart:
           type: string
-          description: Id del carrito asignado al usuario cuando se creó el usuario
+          description: ID of the cart assigned to the user upon creation
         role:
           type: string
-          description: Rol que cumple el usuario
+          description: Role assigned to the user
       example:
         _id: "12345678"
         first_name: Julian
@@ -139,28 +139,28 @@ components:
       properties:
         _id:
           type: string
-          description: Id autogenerado por MongoDB
+          description: Auto-generated ID by MongoDB
         first_name:
           type: string
-          description: Nombre del usuario
+          description: User's first name
         last_name:
           type: string
-          description: Apellido del usuario
+          description: User's last name
         password:
           type: string
-          description: Password del usuario hasheado con bcrypt
+          description: User's password hashed with bcrypt
         email:
           type: string
-          description: Email del usuario
+          description: User's email
         age:
           type: number
-          description: Edad del usuario
+          description: User's age
         cart:
           type: string
-          description: Id del carrito asignado al usuario cuando se creó el usuario
+          description: ID of the cart assigned to the user upon creation
         role:
           type: string
-          description: Rol que cumple el usuario
+          description: Role assigned to the user
       example:
         first_name: Julian
         last_name: Alvarez
@@ -172,13 +172,13 @@ components:
       properties:
         first_name:
           type: string
-          description: Nombre del usuario
+          description: User's first name
         last_name:
           type: string
-          description: Apellido del usuario
+          description: User's last name
         role:
           type: string
-          description: Rol que cumple el usuario
+          description: Role assigned to the user
       example:
         first_name: Julian
         last_name: Alvarez

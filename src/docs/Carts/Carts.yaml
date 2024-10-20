@@ -1,12 +1,12 @@
 paths:
   /api/carts:
     post:
-      summary: Crear un carrito
+      summary: Create a cart
       tags:
         - Carts
       responses:
         "201":
-          description: Carrito creado con éxito
+          description: Cart successfully created
           content:
             application/json:
               schema:
@@ -14,49 +14,49 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Carrito creado con éxito
+                    example: Cart successfully created
                   cart:
                     $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
   /api/carts/{cid}:
     get:
-      summary: Obtener carrito por ID
+      summary: Get cart by ID
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       responses:
         "200":
-          description: Carrito encontrado
+          description: Cart found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: Actualizar carrito por ID
+      summary: Update cart by ID
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       requestBody:
@@ -67,31 +67,31 @@ paths:
               $ref: "#/components/schemas/UpdateCart"
       responses:
         "200":
-          description: Carrito actualizado exitosamente
+          description: Cart successfully updated
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: Eliminar carrito por ID
+      summary: Delete cart by ID
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       responses:
         "200":
-          description: Carrito eliminado correctamente
+          description: Cart successfully deleted
           content:
             application/json:
               schema:
@@ -102,31 +102,31 @@ paths:
                     example: success
                   message:
                     type: string
-                    example: Todos los productos del carrito fueron eliminados correctamente
+                    example: All products in the cart were successfully deleted
                   deletedCart:
                     $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
   /api/carts/{cid}/product/{pid}:
     post:
-      summary: Agregar producto al carrito
+      summary: Add product to cart
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       - name: pid
         in: path
         required: true
-        description: ID del producto
+        description: Product ID
         schema:
           type: string
       requestBody:
@@ -138,36 +138,36 @@ paths:
               properties:
                 quantity:
                   type: integer
-                  description: Cantidad del producto a agregar
+                  description: Quantity of the product to add
                   example: 1
       responses:
         "200":
-          description: Producto agregado correctamente
+          description: Product successfully added
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: Actualizar cantidad de producto en el carrito
+      summary: Update product quantity in cart
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       - name: pid
         in: path
         required: true
-        description: ID del producto
+        description: Product ID
         schema:
           type: string
       requestBody:
@@ -179,41 +179,41 @@ paths:
               properties:
                 quantity:
                   type: integer
-                  description: Nueva cantidad del producto
+                  description: New quantity of the product
                   example: 1
       responses:
         "200":
-          description: Cantidad de producto actualizada correctamente
+          description: Product quantity successfully updated
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: Eliminar producto del carrito
+      summary: Remove product from cart
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       - name: pid
         in: path
         required: true
-        description: ID del producto
+        description: Product ID
         schema:
           type: string
       responses:
         "200":
-          description: Producto eliminado correctamente del carrito
+          description: Product successfully removed from cart
           content:
             application/json:
               schema:
@@ -224,30 +224,30 @@ paths:
                     example: success
                   message:
                     type: string
-                    example: Producto eliminado correctamente del carrito
+                    example: Product successfully removed from cart
                   cart:
                     $ref: "#/components/schemas/Cart"
         "500":
-          description: Error del servidor
+          description: Server error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
   /api/carts/{cid}/purchase:
     post:
-      summary: Realizar compra
+      summary: Make a purchase
       tags:
         - Carts
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: Cart ID
         schema:
           type: string
       responses:
         "200":
-          description: Compra realizada exitosamente
+          description: Purchase successfully made
           content:
             application/json:
               schema:
@@ -258,7 +258,7 @@ paths:
                   product:
                     $ref: "#/components/schemas/Product"
         "500":
-          description: Error en el controlador al comprar un ticket
+          description: Error in the controller when purchasing a ticket
           content:
             application/json:
               schema:
@@ -270,7 +270,7 @@ components:
       properties:
         _id:
           type: string
-          description: ID autogenerado por MongoDB
+          description: Auto-generated ID by MongoDB
         products:
           type: array
           items:
@@ -280,19 +280,19 @@ components:
                 $ref: "#/components/schemas/Product"
               quantity:
                 type: integer
-                description: Cantidad del producto en el carrito
+                description: Quantity of the product in the cart
       example:
         _id: "60d21b4667d0d8992e610c85"
         products:
           - product:
               _id: "60d21b4667d0d8992e610c85"
-              title: Paquete de fideos Marolio
-              description: Paquete de fideos 500g
+              title: Marolio Pasta Pack
+              description: 500g pasta pack
               code: "9001002"
               price: 500
               stock: 250
               status: true
-              category: Comidas
+              category: Food
               thumbnail:
                 - "https://maxiconsumo.com/media/catalog/product/cache/8313a15b471f948db4d9d07d4a9f04a2/2/1/21645_1715226028663c45ac4f4f04.98123354.jpg"
               owner: "dibu@gmail.com"
@@ -302,46 +302,46 @@ components:
       properties:
         _id:
           type: string
-          description: Id autogenerado por MongoDB
+          description: Auto-generated ID by MongoDB
         title:
           type: string
-          description: Título del producto
+          description: Product title
         description:
           type: string
-          description: Descripción del producto
+          description: Product description
         code:
           type: string
-          description: Código unico del producto que lo identifica
+          description: Unique product code
         price:
           type: number
-          description: Precio del producto
+          description: Product price
         stock:
           type: number
-          description: Cantidad disponible del producto
+          description: Available stock of the product
         status:
           type: boolean
-          description: Estado de disponibilidad del producto
+          description: Availability status of the product
         category:
           type: string
-          description: Categoría a la que pertenece el producto
+          description: Product category
         thumbnail:
           type: array
           items:
             type: string
             format: uri
-          description: Imágenes que contiene el producto
+          description: Product images
         owner:
           type: string
-          description: Email del usuario al que pertenece el producto
+          description: Owner's email
       example:
         _id: "60d21b4667d0d8992e610c85"
-        title: Paquete de fideos Marolio
-        description: Paquete de fideos 500g
+        title: Marolio Pasta Pack
+        description: 500g pasta pack
         code: "9001002"
         price: 500
         stock: 250
         status: true
-        category: Comidas
+        category: Food
         thumbnail:
           - "https://maxiconsumo.com/media/catalog/product/cache/8313a15b471f948db4d9d07d4a9f04a2/2/1/21645_1715226028663c45ac4f4f04.98123354.jpg"
         owner: "dibu@gmail.com"
@@ -350,17 +350,17 @@ components:
       properties:
         code:
           type: string
-          description: Código único del ticket
+          description: Unique ticket code
         purchase_datetime:
           type: string
           format: date-time
-          description: Fecha y hora de la compra
+          description: Purchase date and time
         amount:
           type: number
-          description: Monto total de la compra
+          description: Total purchase amount
         purchaser:
           type: string
-          description: ID del usuario que realizó la compra
+          description: ID of the user who made the purchase
       example:
         code: "ABC123456"
         purchase_datetime: "2023-05-31T00:00:00.000Z"
@@ -376,10 +376,10 @@ components:
             properties:
               product:
                 type: string
-                description: ID del producto
+                description: Product ID
               quantity:
                 type: integer
-                description: Cantidad del producto
+                description: Product quantity
       example:
         products:
           - product: "60d21b4667d0d8992e610c85"
@@ -389,6 +389,6 @@ components:
       properties:
         error:
           type: string
-          description: Descripción del error
+          description: Error description
       example:
-        error: "Error interno del servidor"
+        error: "Internal server error"

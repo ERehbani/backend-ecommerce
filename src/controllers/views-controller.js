@@ -53,7 +53,6 @@ class ViewsController {
         ...userDto,
         cart: req.session.usuario.cart,
       };
-
       res.render("products", {
         products: nuevoArray,
         user: userWithCart,
@@ -86,6 +85,7 @@ class ViewsController {
         producto,
         productId: producto._id.toString(),
       });
+      res.redirect("/apidocs") //
     } catch (error) {
       CustomError.crearError({
         nombre: "View detail",
@@ -94,6 +94,7 @@ class ViewsController {
         codigo: EErrors.TIPO_INVALIDO,
       });
       req.logger.error(error);
+      res.redirect("/apidocs") //
     }
   }
 
@@ -117,6 +118,7 @@ class ViewsController {
       }));
 
       res.render("cart", { products: productsInCart });
+      res.redirect("/apidocs") //
     } catch (error) {
       CustomError.crearError({
         nombre: "View cart",
@@ -130,18 +132,26 @@ class ViewsController {
 
   async viewLogin(req, res) {
     res.render("login", { req: req.session.login });
+    
+    res.redirect("/apidocs") //
   }
 
   async viewRegister(req, res) {
     res.render("register");
+    
+    res.redirect("/apidocs") //
   }
 
   async resetPasswordRequest(req, res) {
     res.render("reset-password");
+
+    res.redirect("/apidocs") //
   }
 
   async resetPassword(req, res) {
     res.render("change-password");
+
+    res.redirect("/apidocs") //
   }
 
   async sendConfirmation(req, res) {
@@ -163,6 +173,8 @@ class ViewsController {
 
       req.session.usuario._id = result._id;
       res.render("profile", { user: req.session.usuario, isAdmin, isPremium });
+    
+      res.redirect("/apidocs") //
     }
   }
 
@@ -198,6 +210,7 @@ class ViewsController {
         res.redirect("/products");
       }
       res.render("chat");
+
     } catch (error) {
       CustomError.crearError({
         nombre: "View chat",
@@ -221,7 +234,9 @@ class ViewsController {
           id: user.id
         }))
         res.render("dashboard", { users: mapUsers });
+
       } else {
+        res.redirect("/apidocs")
         res.status(403).send("Acceso denegado");
       }
     } catch (error) {

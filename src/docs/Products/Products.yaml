@@ -1,12 +1,12 @@
 paths:
   /api/products:
     get:
-      summary: Se obtienen todos los productos de la base de datos
+      summary: Get all products from the database
       tags:
         - Products
       responses:
         "200":
-          description: Se obtienen todos los productos correctamente
+          description: All products retrieved successfully
           content:
             application/json:
               schema:
@@ -14,7 +14,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Products"
     post:
-      summary: Creacion de producto
+      summary: Create a product
       tags:
         - Products
       requestBody:
@@ -25,39 +25,39 @@ paths:
               $ref: "#/components/schemas/createProduct"
       responses:
         "201":
-          description: Producto creado exitosamente
+          description: Product created successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Products"
   /api/products/{id}:
     get:
-      summary: Se obtiene un producto por ID
+      summary: Get a product by ID
       tags:
         - Products
       parameters: 
       - name: id
         in: path
         required: true
-        description: id del producto que se quiere buscar
+        description: ID of the product to be fetched
         schema:
           type: string
       responses:
         "200":
-          description: Producto encontrado
+          description: Product found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Products"
     put:
-      summary: Actualizar un producto por ID
+      summary: Update a product by ID
       tags:
         - Products
       parameters:
       - name: id
         in: path
         required: true
-        description: id del producto que se quiere actualizar
+        description: ID of the product to be updated
         schema:
           type: string
       requestBody:
@@ -68,7 +68,7 @@ paths:
               $ref: "#/components/schemas/createProduct"
       responses:
         "200":
-          description: Producto actualizado exitosamente
+          description: Product updated successfully
           content:
             application/json:
               schema:
@@ -76,27 +76,27 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Producto actualizado exitosamente
+                    example: Product updated successfully
         "400":
-          description: Error al actualizar el producto
+          description: Error updating the product
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: Eliminar un producto por ID
+      summary: Delete a product by ID
       tags:
         - Products
       parameters:
       - name: id
         in: path
         required: true
-        description: id del producto que se quiere eliminar
+        description: ID of the product to be deleted
         schema:
           type: string
       responses:
         "200":
-          description: Producto eliminado correctamente
+          description: Product deleted successfully
           content:
             application/json:
               schema:
@@ -104,17 +104,17 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Producto eliminado correctamente
+                    example: Product deleted successfully
                   deletedProduct:
                     $ref: "#/components/schemas/Products"
         "400":
-          description: El producto que desea borrar no existe
+          description: The product you want to delete does not exist
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: Error interno del servidor
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -126,46 +126,46 @@ components:
       properties:
         _id:
           type: string
-          description: Id autogenerado por MongoDB
+          description: Auto-generated ID by MongoDB
         title:
           type: string
-          description: Título del producto
+          description: Product title
         description:
           type: string
-          description: Descripción del producto
+          description: Product description
         code:
           type: string
-          description: Código único del producto que lo identifica
+          description: Unique product code
         price:
           type: number
-          description: Precio del producto
+          description: Product price
         stock:
           type: number
-          description: Cantidad disponible del producto
+          description: Available stock of the product
         status:
           type: boolean
-          description: Estado de disponibilidad del producto
+          description: Availability status of the product
         category:
           type: string
-          description: Categoría a la que pertenece el producto
+          description: Product category
         thumbnail:
           type: array
           items:
             type: string
             format: uri
-          description: Imágenes que contiene el producto
+          description: Product images
         owner:
           type: string
-          description: Email del usuario al que pertenece el producto
+          description: Email of the user to whom the product belongs
       example:
         _id: "65c16244a34c623a26501f64"
-        title: Paquete de fideos Marolio
-        description: Paquete de fideos 500g
+        title: Marolio Pasta Pack
+        description: 500g pasta pack
         code: "9001002"
         price: 500
         stock: 250
         status: true
-        category: Comidas
+        category: Food
         thumbnail:
           - "https://maxiconsumo.com/media/catalog/product/cache/8313a15b471f948db4d9d07d4a9f04a2/2/1/21645_1715226028663c45ac4f4f04.98123354.jpg"
         owner: dibu@gmail.com
@@ -174,41 +174,41 @@ components:
       properties:
         title:
           type: string
-          description: Título del producto
+          description: Product title
         description:
           type: string
-          description: Descripción del producto
+          description: Product description
         code:
           type: string
-          description: Código único del producto que lo identifica
+          description: Unique product code
         price:
           type: number
-          description: Precio del producto
+          description: Product price
         stock:
           type: number
-          description: Cantidad disponible del producto
+          description: Available stock of the product
         status:
           type: boolean
-          description: Estado de disponibilidad del producto
+          description: Availability status of the product
         category:
           type: string
-          description: Categoría a la que pertenece el producto
+          description: Product category
         thumbnail:
           type: array
           items:
             type: string
             format: uri
-          description: Imágenes que contiene el producto
+          description: Product images
         owner:
           type: string
-          description: Email del usuario al que pertenece el producto
+          description: Email of the user to whom the product belongs
       example:
-        title: Paquete de fideos Marolio
-        description: Paquete de fideos 500g
+        title: Marolio Pasta Pack
+        description: 500g pasta pack
         code: "9001002"
         price: 500
         stock: 250
-        category: Comidas
+        category: Food
         thumbnail:
           - "https://maxiconsumo.com/media/catalog/product/cache/8313a15b471f948db4d9d07d4a9f04a2/2/1/21645_1715226028663c45ac4f4f04.98123354.jpg"
         owner: dibu@gmail.com
@@ -217,4 +217,4 @@ components:
       properties:
         error:
           type: string
-          description: Descripción del error
+          description: Error description
